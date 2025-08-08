@@ -403,7 +403,6 @@ jQuery(document).ready(function($) {
                     if (roundNumber >= TOTAL_ROUNDS) {
                         gameOver = true;
                         launchConfetti();
-                        saveGameSession(); // Gesamtes Spiel speichern
                     } else {
                         roundNumber++;
                         resetForNextRound();
@@ -461,78 +460,40 @@ jQuery(document).ready(function($) {
         const roundEndTime = new Date();
         const duration = Math.round((roundEndTime - roundStartTime) / 1000);
         
-        const roundData = {
-            sessionId: sessionId,
-            gameMode: 'counting',
-            roundNumber: roundNumber,
-            errors: errors,
-            wrongClicks: wrongClicks,
-            duration: duration,
-            timestamp: roundEndTime.toISOString()
-        };
+        console.log('Speichere Runde:', roundNumber, 'Fehler:', errors);
         
-        console.log('Speichere Runden-Ergebnis:', roundData);
-        
-        // An WordPress senden
-        if (typeof wortSpielAjax !== 'undefined') {
-            $.ajax({
-                url: wortSpielAjax.ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'wort_spiel_save_counting_round',
-                    nonce: wortSpielAjax.nonce,
-                    round_data: JSON.stringify(roundData)
-                },
-                success: function(response) {
-                    if (response.success) {
-                        console.log('Runden-Ergebnis gespeichert');
-                    } else {
-                        console.error('Fehler beim Speichern:', response.data?.message);
-                    }
-                },
-                error: function() {
-                    console.error('AJAX-Fehler beim Speichern der Runde');
-                }
-            });
-        } else {
-            // Fallback: LocalStorage
-            let localData = JSON.parse(localStorage.getItem('counting_game_data') || '[]');
-            localData.push(roundData);
-            localStorage.setItem('counting_game_data', JSON.stringify(localData));
+        // Falsche Klicks als String zusammenfassen
+        let wrongClicksText = ``;
+        if (wrongClicks.length > 0) {
+            const clickedNumbers = wrongClicks.map(click => click.clickedNumber).join(', ');
+            wrongClicksText += `(${clickedNumbers})`;
         }
-    }
-
-    // Gesamtes Spiel-Session speichern
-    function saveGameSession() {
-        console.log('Spiel beendet - speichere Session');
         
-        // Session-Zusammenfassung
-        const sessionData = {
-            sessionId: sessionId,
-            gameMode: 'counting',
-            totalRounds: TOTAL_ROUNDS,
-            completedRounds: roundNumber,
-            gameCompleted: true,
-            timestamp: new Date().toISOString()
-        };
-        
-        if (typeof wortSpielAjax !== 'undefined') {
-            $.ajax({
-                url: wortSpielAjax.ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'wort_spiel_save_counting_session',
-                    nonce: wortSpielAjax.nonce,
-                    session_data: JSON.stringify(sessionData)
-                },
-                success: function(response) {
-                    console.log('Spiel-Session gespeichert');
-                },
-                error: function() {
-                    console.error('Fehler beim Speichern der Session');
+        // An bestehende wort_spiel_results Tabelle anpassen
+        $.ajax({
+            url: wortSpielAjax.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'wort_spiel_save_game',
+                nonce: wortSpielAjax.nonce,
+                session_id: sessionId,
+                game_mode: 'counting',
+                target_word: `Runde ${roundNumber}`,
+                user_input: wrongClicksText,  // ← Erweitert!
+                is_correct: errors === 0 ? 1 : 0,
+                duration: duration
+            },
+            success: function(response) {
+                if (response.success) {
+                    console.log('Runde gespeichert');
+                } else {
+                    console.error('Fehler beim Speichern:', response.data?.message);
                 }
-            });
-        }
+            },
+            error: function() {
+                console.error('AJAX-Fehler beim Speichern der Runde');
+            }
+        });
     }
 
     // Zurück zum Menü
