@@ -29,6 +29,9 @@ if (!empty($game_mode)) {
         if ($game_mode === 'counting') {
             include WORT_SPIEL_PLUGIN_PATH . 'templates/game-counting.php';
             return;
+        } elseif (strpos($game_mode, '-audio-extra') !== false) {
+            include WORT_SPIEL_PLUGIN_PATH . 'templates/game-audio-extra.php';
+            return;
         } elseif (strpos($game_mode, '-learning') !== false) {
             include WORT_SPIEL_PLUGIN_PATH . 'templates/game-learning.php';
             return;
@@ -211,7 +214,13 @@ jQuery(document).ready(function($) {
                     title: '<?php _e('Zählen 1-9'); ?>',
                     description: '<?php _e('Erweiterte Essen-Wörter mit besonderen Features', 'wort-spiel'); ?>',
                     icon: '🍎✨'
-                }
+                },
+  'animals-audio-extra': {
+    id: 'animals-audio-extra',
+    title: 'Tiere Audio-Extra',
+    description: 'Höre das Tierwort und finde die richtigen Buchstaben',
+    icon: ''
+}              
 
             };
             

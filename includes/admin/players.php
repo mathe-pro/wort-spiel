@@ -91,7 +91,8 @@ $available_modes = array(
     'food' => __('Essen', 'wort-spiel'),
     'food-learning' => __('Essen (Lernmodus)', 'wort-spiel'),
     'food-extra' => __('Essen (Extra)', 'wort-spiel'),
-    'counting' => __('Zahlen 1-9', 'wort-spiel') 
+    'counting' => __('Zahlen 1-9', 'wort-spiel'),
+    'animals-audio-extra' => __('Tiere Audio-Extra', 'wort-spiel') 
 );
 
 // Ausgewählter User für Details

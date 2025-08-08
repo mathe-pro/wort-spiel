@@ -600,7 +600,13 @@ class WortSpielPlugin {
     'title' => __('Zahlen 1-9', 'wort-spiel'),// ← NEU  
     'description' => __('Zahlen in Reihenfolge klicken', 'wort-spiel'), // ← NEU
     'template' => 'game-counting.php'          // ← NEU
-            )
+            ),
+            'animals-audio-extra' => array(
+    'id' => 'animals-audio-extra',
+    'title' => __('Tiere Audio-Extra', 'wort-spiel'),
+    'description' => __('Höre das Tierwort und finde die richtigen Buchstaben', 'wort-spiel'),
+    'template' => 'game-audio-extra.php'
+)
              
         );
         

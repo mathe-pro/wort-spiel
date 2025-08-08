@@ -245,10 +245,36 @@ if (!in_array($game_mode, $allowed_modes)) {
     transition: all 0.3s;
 }
 
+/* Drag & Drop Styles für Slots */
+.slot-ghost {
+    opacity: 0.4;
+    background: #e3f2fd !important;
+}
+
+.slot-chosen {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(33, 150, 243, 0.3);
+}
+
+.slot-drag {
+    transform: rotate(5deg);
+    z-index: 1000;
+}
+
+.word-slot {
+    cursor: move; /* Zeigt an dass Slots bewegbar sind */
+}
+
 .word-slot.filled {
     background: #e3f2fd;
     border: 3px solid #2196f3;
     color: #1976d2;
+    cursor: pointer; /* Klickbar zum Entfernen */
+}
+
+.word-slot:hover {
+    transform: translateY(-2px);
+    transition: all 0.2s;
 }
 
 .word-slot.correct {
@@ -438,7 +464,10 @@ jQuery(document).ready(function($) {
     // Nur laden wenn Container vorhanden
     if (!$('#wort-spiel-audio-extra-container').length) return;
     
-    console.log('Audio-Extra-Spiel initialisiert');
+    // SortableJS Library für Drag & Drop einbinden
+    if (typeof Sortable === 'undefined') {
+        $('<script>').attr('src', 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js').appendTo('head');
+    }
     
     // Wortlisten mit zusätzlichen Buchstaben (Distraktoren)
     const wordLists = {
@@ -537,7 +566,13 @@ jQuery(document).ready(function($) {
     function getAudioPath(word, category) {
         const fileName = getAudioFileName(word);
         const pluginPath = wortSpielAjax ? wortSpielAjax.pluginUrl : '/wp-content/plugins/wort-spiel/';
-        return `${pluginPath}assets/audio/${category}/${fileName}.mp3`;
+        // PFAD ANPASSEN: Hier kannst du den Audio-Pfad ändern
+        return `${pluginPath}assets/audio/${category}/${fileName}.m4a`;
+        
+        // ALTERNATIVE PFADE (auskommentiert):
+        // return `${pluginPath}audio/${category}/${fileName}.m4a`;  // Andere Dateiendung
+        // return `/wp-content/uploads/audio/${category}/${fileName}.mp3`;  // Uploads-Ordner
+        // return `./audio/${category}/${fileName}.mp3`;  // Relativer Pfad
     }
     
     async function loadAudio(word, category) {
@@ -673,6 +708,37 @@ jQuery(document).ready(function($) {
                 .addClass('word-slot')
                 .attr('data-index', i);
             wordLine.append(slot);
+        }
+        
+        // Drag & Drop für Slots aktivieren
+        initSortableSlots();
+    }
+    
+    function initSortableSlots() {
+        // SortableJS für Drag & Drop der Slots
+        if (typeof Sortable !== 'undefined') {
+            new Sortable(wordLine[0], {
+                animation: 150,
+                ghostClass: 'slot-ghost',
+                chosenClass: 'slot-chosen',
+                dragClass: 'slot-drag',
+                onSort: function(evt) {
+                    // selectedLetters Array nach dem Sortieren aktualisieren
+                    const newSlots = wordLine.find('.word-slot');
+                    selectedLetters = [];
+                    
+                    newSlots.each(function() {
+                        const letter = $(this).text().trim();
+                        if (letter) {
+                            selectedLetters.push(letter);
+                        }
+                    });
+                    
+                    console.log('Neue Reihenfolge:', selectedLetters);
+                }
+            });
+        } else {
+            console.warn('SortableJS nicht verfügbar - Drag & Drop deaktiviert');
         }
     }
     
