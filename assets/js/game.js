@@ -23,6 +23,7 @@ jQuery(document).ready(function($) {
         gameStartTime: null,
         sessionId: null,
         gameCounter: 0,
+        audioTimeout: null, // NEU: Timeout-Referenz speichern
         
         // Wortlisten (Fallback)
         wordLists: {
@@ -91,6 +92,16 @@ jQuery(document).ready(function($) {
         bindEvents: function() {
             console.log('Events werden gebunden...');
             
+            // WICHTIG: Erst alle Events entfernen!
+            $('#back-to-menu-btn, #back-to-menu-end-btn').off('click');
+            $('#restart-game-btn').off('click');
+            $('#replay-btn').off('click');
+            $('#check-btn').off('click');
+            $('#reset-btn').off('click');
+            $('#new-word-btn').off('click');
+            $('#playfield').off('click', '.letter-btn');
+            
+            // Dann neu binden
             $('#back-to-menu-btn, #back-to-menu-end-btn').on('click', this.backToMenu.bind(this));
             $('#restart-game-btn').on('click', this.restartGame.bind(this));
             $('#replay-btn').on('click', this.replayAudio.bind(this));
@@ -111,6 +122,9 @@ jQuery(document).ready(function($) {
         // Spiel initialisieren
         initGame: function() {
             console.log('initGame() gestartet');
+            
+            // WICHTIG: Audio vom vorherigen Wort stoppen!
+            this.stopCurrentAudio();
             
             const word = this.selectRandomWord();
             if (!word) {
@@ -292,16 +306,20 @@ jQuery(document).ready(function($) {
         },
         
         playAudio: function(word, category, delay = 700) {
-            console.log('playAudio() für:', word, category);
+            console.log('=== PLAY AUDIO START ===', word, category, 'Key:', `${category}_${word}`);
+            
+            // WICHTIG: Vorheriges Audio stoppen!
+            this.stopCurrentAudio();
             
             const key = `${category}_${word}`;
             
             $('#loading-message').show();
             $('#replay-btn').prop('disabled', true);
             
-            setTimeout(() => {
+            // WICHTIG: Timeout-Referenz speichern!
+            this.audioTimeout = setTimeout(() => {
                 if (this.audioCache[key]) {
-                    console.log('Audio aus Cache laden');
+                    console.log('Audio aus Cache laden für:', key);
                     this.currentAudio = this.audioCache[key];
                     this.currentAudio.currentTime = 0;
                     this.currentAudio.play().catch(e => console.log('Play Error:', e));
@@ -312,8 +330,13 @@ jQuery(document).ready(function($) {
                     console.log('Lade neues Audio:', this.getAudioPath(word, category));
                     const audio = new Audio(this.getAudioPath(word, category));
                     
-                    audio.addEventListener('canplaythrough', () => {
-                        console.log('Audio geladen');
+                    // WICHTIG: Event-Handler definieren BEVOR sie gesetzt werden
+                    const onCanPlay = () => {
+                        console.log('Audio geladen für:', key);
+                        // Event-Listener sofort entfernen nach Ausführung!
+                        audio.removeEventListener('canplaythrough', onCanPlay);
+                        audio.removeEventListener('error', onError);
+                        
                         this.audioCache[key] = audio;
                         this.currentAudio = audio;
                         audio.play().catch(e => console.log('Play Error:', e));
@@ -321,19 +344,55 @@ jQuery(document).ready(function($) {
                         $('#replay-btn').prop('disabled', false);
                         $('#error-message').hide();
                         $('#audio-status').text('🔊 Höre gut zu...');
-                    });
+                    };
                     
-                    audio.addEventListener('error', (e) => {
-                        console.log('Audio-Fehler:', e);
+                    const onError = (e) => {
+                        console.log('Audio-Fehler für:', key, e);
+                        // Event-Listener sofort entfernen nach Ausführung!
+                        audio.removeEventListener('canplaythrough', onCanPlay);
+                        audio.removeEventListener('error', onError);
+                        
                         $('#loading-message').hide();
                         $('#error-message').show().text(`Audio für "${word}" nicht verfügbar`);
                         $('#replay-btn').prop('disabled', true);
                         $('#audio-status').text(`Gesuchtes Wort: ${word}`);
-                    });
+                    };
+                    
+                    // Event-Listener setzen
+                    audio.addEventListener('canplaythrough', onCanPlay);
+                    audio.addEventListener('error', onError);
                     
                     audio.load();
                 }
+                
+                // Timeout ist abgelaufen
+                this.audioTimeout = null;
             }, delay);
+        },
+        
+        // Audio stoppen (ERWEITERT!)
+        stopCurrentAudio: function() {
+            // WICHTIG: Timeout canceln!
+            if (this.audioTimeout) {
+                console.log('Cancele Audio-Timeout');
+                clearTimeout(this.audioTimeout);
+                this.audioTimeout = null;
+            }
+            
+            if (this.currentAudio) {
+                console.log('Stoppe vorheriges Audio');
+                this.currentAudio.pause();
+                this.currentAudio.currentTime = 0;
+                this.currentAudio = null;
+            }
+            
+            // Auch loading-Status zurücksetzen
+            $('#loading-message').hide();
+            $('#replay-btn').prop('disabled', false);
+        },.currentAudio.pause();
+                this.currentAudio.currentTime = 0;
+                this.currentAudio = null;
+            }
         },
         
         replayAudio: function() {
@@ -524,6 +583,11 @@ jQuery(document).ready(function($) {
         },
         
         bindEvents: function() {
+            // WICHTIG: Doppelbindung verhindern!
+            $('#show-history-btn').off('click');
+            $('.close-modal').off('click');
+            $('#history-modal').off('click');
+            
             // History anzeigen
             $('#show-history-btn').on('click', this.showHistory.bind(this));
             
@@ -652,8 +716,8 @@ jQuery(document).ready(function($) {
             $('#loading-message').hide();
             $('#game-modes-grid').show();
             
-            // Click-Handler für Spielmodi
-            $('.game-mode-card').on('click', function() {
+            // Click-Handler für Spielmodi (OHNE DOPPELBINDUNG)
+            $('.game-mode-card').off('click').on('click', function() {
                 const modeId = $(this).data('mode');
                 console.log('Spielmodus gewählt:', modeId);
                 wortSpielMenu.startGame(modeId);
