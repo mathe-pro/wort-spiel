@@ -10,6 +10,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+
+
 // WICHTIG: Prüfen ob Spiel-Modus gewählt wurde
 $game_mode = isset($_GET['game_mode']) ? sanitize_text_field($_GET['game_mode']) : '';
 
