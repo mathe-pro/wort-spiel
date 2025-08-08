@@ -514,6 +514,24 @@ class WortSpielPlugin {
     }
     
     /**
+     * Auto-Rolle und Modi für neue User zuweisen
+     */
+    public function auto_assign_user_role($user_id) {
+        // User-Objekt abrufen
+        $user = new WP_User($user_id);
+        
+        // Rolle auf wort_spiel_player setzen
+        $user->set_role('wort_spiel_player');
+        
+        // Standard-Modi zuweisen
+        $default_modes = get_option('wort_spiel_default_modes', array('animals', 'nature'));
+        update_user_meta($user_id, 'wort_spiel_allowed_modes', $default_modes);
+        
+        // Log für Admin
+        error_log("Wort-Spiel: Neue User-Rolle zugewiesen für User ID $user_id");
+    }
+    
+    /**
      * Verfügbare Spielmodi abrufen
      */
     public function get_available_game_modes() {
