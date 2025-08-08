@@ -594,7 +594,14 @@ class WortSpielPlugin {
                 'description' => __('Erweiterte Essen-Wörter mit besonderen Features', 'wort-spiel'),
                 'template' => 'game-extra.php',
                 'category' => 'food'
+            ),
+            'counting' => array(                           // ← NEU HINZUFÜGEN
+    'id' => 'counting',                        // ← NEU
+    'title' => __('Zahlen 1-9', 'wort-spiel'),// ← NEU  
+    'description' => __('Zahlen in Reihenfolge klicken', 'wort-spiel'), // ← NEU
+    'template' => 'game-counting.php'          // ← NEU
             )
+             
         );
         
         // Hook für andere Plugins/Themes, um neue Modi hinzuzufügen

@@ -10,12 +10,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-
-
 // WICHTIG: Prüfen ob Spiel-Modus gewählt wurde
 $game_mode = isset($_GET['game_mode']) ? sanitize_text_field($_GET['game_mode']) : '';
 
-// Wenn Game-Mode gesetzt ist, lade das Spiel-Template
+// Wenn Game-Mode gesetzt ist, lade das entsprechende Template
 if (!empty($game_mode)) {
     // Game-Mode für Template verfügbar machen
     $atts = array('mode' => $game_mode);
@@ -27,9 +25,21 @@ if (!empty($game_mode)) {
     }
 
     if (in_array($game_mode, $allowed_modes)) {
-        // Spiel-Template laden
-        include WORT_SPIEL_PLUGIN_PATH . 'templates/game.php';
-        return;
+        // Spezielle Templates für verschiedene Spielarten
+        if ($game_mode === 'counting') {
+            include WORT_SPIEL_PLUGIN_PATH . 'templates/game-counting.php';
+            return;
+        } elseif (strpos($game_mode, '-learning') !== false) {
+            include WORT_SPIEL_PLUGIN_PATH . 'templates/game-learning.php';
+            return;
+        } elseif (strpos($game_mode, '-extra') !== false) {
+            include WORT_SPIEL_PLUGIN_PATH . 'templates/game-extra.php';
+            return;
+        } else {
+            // Standard Wort-Spiel Template
+            include WORT_SPIEL_PLUGIN_PATH . 'templates/game.php';
+            return;
+        }
     } else {
         echo '<div class="wort-spiel-error">❌ Sie haben keine Berechtigung für diesen Spielmodus.</div>';
         return;
@@ -194,7 +204,15 @@ jQuery(document).ready(function($) {
                     title: '<?php _e('Essen (Extra)', 'wort-spiel'); ?>',
                     description: '<?php _e('Erweiterte Essen-Wörter mit besonderen Features', 'wort-spiel'); ?>',
                     icon: '🍎✨'
+                },
+
+                    'counting': {
+                    id: 'counting',
+                    title: '<?php _e('Zählen 1-9'); ?>',
+                    description: '<?php _e('Erweiterte Essen-Wörter mit besonderen Features', 'wort-spiel'); ?>',
+                    icon: '🍎✨'
                 }
+
             };
             
             let modesHtml = '';

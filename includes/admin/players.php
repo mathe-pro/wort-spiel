@@ -90,7 +90,8 @@ $available_modes = array(
     'colors-learning' => __('Farben (Lernmodus)', 'wort-spiel'),
     'food' => __('Essen', 'wort-spiel'),
     'food-learning' => __('Essen (Lernmodus)', 'wort-spiel'),
-    'food-extra' => __('Essen (Extra)', 'wort-spiel')
+    'food-extra' => __('Essen (Extra)', 'wort-spiel'),
+    'counting' => __('Zahlen 1-9', 'wort-spiel') 
 );
 
 // Ausgewählter User für Details
