@@ -28,12 +28,12 @@ if (!in_array($game_mode, $allowed_modes)) {
 
 <div id="wort-spiel-game-container" class="wort-spiel-game">
     
-    <!-- Zurück Button -->
+    <!-- Zurück Button (GLOBAL CSS) -->
     <button id="back-to-menu-btn" class="wort-spiel-btn back-btn">
         ← <?php _e('Zurück zum Menü', 'wort-spiel'); ?>
     </button>
     
-    <!-- Spiel Header -->
+    <!-- Spiel Header (GLOBAL CSS) -->
     <div class="game-header">
         <h2 id="game-mode-title"><?php echo esc_html($game_mode); ?></h2>
         <div class="player-info">
@@ -41,17 +41,17 @@ if (!in_array($game_mode, $allowed_modes)) {
         </div>
     </div>
     
-    <!-- Audio Bereich -->
+    <!-- Audio Bereich (GLOBAL CSS für has-audio games) -->
     <div id="audio-display" class="audio-display">
         <div id="audio-status" class="audio-status">
             <?php _e('Höre gut zu...', 'wort-spiel'); ?>
         </div>
-        <button id="replay-btn" class="wort-spiel-btn primary">
+        <button id="replay-btn" class="wort-spiel-btn primary audio-btn">
             🔊 <?php _e('Wort wiederholen', 'wort-spiel'); ?>
         </button>
     </div>
     
-    <!-- Loading & Error -->
+    <!-- Loading & Error (GLOBAL CSS) -->
     <div id="loading-message" class="loading-message" style="display:none;">
         <?php _e('Lade Audio...', 'wort-spiel'); ?>
     </div>
@@ -59,17 +59,17 @@ if (!in_array($game_mode, $allowed_modes)) {
         <?php _e('Audio konnte nicht geladen werden.', 'wort-spiel'); ?>
     </div>
     
-    <!-- Spielfeld -->
-    <div id="playfield" class="playfield">
+    <!-- PLAYFIELD - Template-spezifisches CSS -->
+    <div id="playfield" class="playfield wort-game-playfield">
         <!-- Buchstaben-Buttons werden hier generiert -->
     </div>
     
-    <!-- Wort-Linie -->
-    <div id="word-line" class="word-line">
+    <!-- WORT-LINIE - Template-spezifisches CSS -->
+    <div id="word-line" class="word-line wort-game-word-line">
         <!-- Wort-Slots werden hier generiert -->
     </div>
     
-    <!-- Spiel-Buttons -->
+    <!-- Spiel-Buttons (GLOBAL CSS) -->
     <div id="game-controls" class="game-controls">
         <button id="check-btn" class="wort-spiel-btn success">
             <?php _e('Prüfen', 'wort-spiel'); ?>
@@ -82,12 +82,12 @@ if (!in_array($game_mode, $allowed_modes)) {
         </button>
     </div>
     
-    <!-- Ergebnis-Anzeige -->
+    <!-- Ergebnis-Anzeige (GLOBAL CSS) -->
     <div id="result-display" class="result-display">
         <!-- Ergebnis wird hier angezeigt -->
     </div>
     
-    <!-- End Screen -->
+    <!-- End Screen (GLOBAL CSS) -->
     <div id="end-screen" class="end-screen" style="display:none;">
         <div class="end-screen-content">
             <div class="end-title">
@@ -106,8 +106,135 @@ if (!in_array($game_mode, $allowed_modes)) {
     
 </div>
 
+<!-- TEMPLATE-SPEZIFISCHES CSS für Standard Wort-Spiele -->
+<style>
+/* ===== PLAYFIELD STYLES (Template-spezifisch) ===== */
+.wort-game-playfield {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    margin-bottom: 30px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.wort-game-playfield .letter-btn {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.8rem;
+    font-weight: bold;
+    background: white;
+    color: #2c3e50;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wort-game-playfield .letter-btn:hover {
+    background: #f8f9fa;
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.wort-game-playfield .letter-btn.selected {
+    background: #007cba;
+    color: white;
+    transform: scale(0.9);
+}
+
+/* ===== WORD LINE STYLES (Template-spezifisch) ===== */
+.wort-game-word-line {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 30px;
+    min-height: 80px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.wort-game-word-line .word-slot {
+    width: 70px;
+    height: 70px;
+    border: 3px dashed #dee2e6;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    background: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.wort-game-word-line .word-slot.filled {
+    background: #e3f2fd;
+    border-color: #007cba;
+    border-style: solid;
+}
+
+.wort-game-word-line .word-slot.correct {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+    border-style: solid;
+    animation: pulse-green 0.6s ease-in-out;
+}
+
+.wort-game-word-line .word-slot.wrong {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+    border-style: solid;
+    animation: shake 0.6s ease-in-out;
+}
+
+@keyframes pulse-green {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(40, 167, 69, 0.5); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* ===== RESPONSIVE für Template-Elemente ===== */
+@media (max-width: 768px) {
+    .wort-game-playfield {
+        height: 300px;
+    }
+    
+    .wort-game-playfield .letter-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+    
+    .wort-game-word-line .word-slot {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}
+</style>
+
 <script type="text/javascript">
 jQuery(document).ready(function($) {
+    
+    // Nur laden wenn Container vorhanden
+    if (!$('#wort-spiel-game-container').length) return;
     
     // Spiel-Objekt
     const WortSpielGame = {
