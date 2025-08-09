@@ -376,13 +376,13 @@
     animation: pulse-green 0.6s ease-in-out;
 }
 
-.word-slot.wrong {
+/*.word-slot.wrong {
     background: #dc3545;
     color: white;
     border-color: #dc3545;
     border-style: solid;
     animation: shake 0.6s ease-in-out;
-}
+}*/
 
 @keyframes pulse-green {
     0% { transform: scale(1); }

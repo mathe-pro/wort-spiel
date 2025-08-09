@@ -184,17 +184,17 @@ if (!in_array($game_mode, $allowed_modes)) {
 
 .wort-game-word-line .word-slot.correct {
     background: #28a745;
-    color: white;
+    color: red;
     border-color: #28a745;
     border-style: solid;
-    animation: pulse-green 0.6s ease-in-out;
+    animation: pulse-green 1.7s ease-in-out;
 }
 
 .wort-game-word-line .word-slot.wrong {
-    background: #dc3545;
+    /*background: #dc3545;
     color: white;
     border-color: #dc3545;
-    border-style: solid;
+    border-style: solid;*/
     animation: shake 0.6s ease-in-out;
 }
 
@@ -503,11 +503,12 @@ jQuery(document).ready(function($) {
                 // Nach kurzer Verzögerung neues Wort
                 setTimeout(() => {
                     this.initGame();
-                }, 500);
+                }, 2000);
                 
             } else {
                 // Falsch
-                slots.addClass('wrong');
+                slots.removeClass('correct').addClass('wrong');
+                
                 $('#result-display').text(`❌ <?php _e('Falsch! Du hattest:', 'wort-spiel'); ?> "${userWord}" - <?php _e('Richtig:', 'wort-spiel'); ?> "${this.currentWord}"`)
                     .removeClass('success').addClass('error');
                 
