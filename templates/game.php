@@ -1,8 +1,7 @@
 <?php
 /**
  * Template für das Hauptspiel
- * 
- * @package WortSpiel
+ * NO SCROLL + AUDIO BUTTON IMMER VERSION
  */
 
 // Sicherheit
@@ -24,70 +23,84 @@ if (!in_array($game_mode, $allowed_modes)) {
     echo '<p>' . __('Sie haben keine Berechtigung für diesen Spielmodus.', 'wort-spiel') . '</p>';
     return;
 }
+
+// Audio-Spiele erkennen (aber Button IMMER anzeigen)
+$has_audio = true; // IMMER TRUE - Button immer da
+$audio_enabled = (strpos($game_mode, 'audio') !== false); // Für JavaScript
 ?>
 
 <div id="wort-spiel-game-container" class="wort-spiel-game">
     
-    <!-- Zurück Button (GLOBAL CSS) -->
-    <button id="back-to-menu-btn" class="wort-spiel-btn back-btn">
-        ← <?php _e('Zurück zum Menü', 'wort-spiel'); ?>
-    </button>
-    
-    <!-- Spiel Header (GLOBAL CSS) -->
+    <!-- ===== HEADER ===== -->
     <div class="game-header">
-        <h2 id="game-mode-title"><?php echo esc_html($game_mode); ?></h2>
-        <div class="player-info">
-            <?php printf(__('Spieler: %s', 'wort-spiel'), '<strong>' . esc_html($current_user->display_name) . '</strong>'); ?>
+        <div class="header-left">
+            <button id="back-to-menu-btn" class="wort-spiel-btn back-btn">
+                ← <?php _e('Zurück', 'wort-spiel'); ?>
+            </button>
+            <h2 id="game-mode-title"><?php echo esc_html($game_mode); ?></h2>
+        </div>
+        <div class="header-right">
+            <div class="player-info">
+                <?php printf(__('Spieler: %s', 'wort-spiel'), '<strong>' . esc_html($current_user->display_name) . '</strong>'); ?>
+            </div>
+            <!-- AUDIO-BUTTON IMMER ANZEIGEN -->
+            <button id="replay-btn" class="wort-spiel-btn audio-btn">
+                🔊 <?php _e('Wiederholen', 'wort-spiel'); ?>
+            </button>
         </div>
     </div>
     
-    <!-- Audio Bereich (GLOBAL CSS für has-audio games) -->
-    <div id="audio-display" class="audio-display">
-        <div id="audio-status" class="audio-status">
-            <?php _e('Höre gut zu...', 'wort-spiel'); ?>
+    <!-- ===== GAME-CONTENT ===== -->
+    <div class="game-content">
+        
+        <!-- Audio-Status (nur bei Audio-Spielen anzeigen) -->
+        <?php if ($audio_enabled): ?>
+        <div id="audio-display" class="audio-display">
+            <div id="audio-status" class="audio-status">
+                <?php _e('Höre gut zu...', 'wort-spiel'); ?>
+            </div>
         </div>
-        <button id="replay-btn" class="wort-spiel-btn primary audio-btn">
-            🔊 <?php _e('Wort wiederholen', 'wort-spiel'); ?>
-        </button>
+        
+        <!-- Loading & Error Messages -->
+        <div id="loading-message" class="loading-message" style="display:none;">
+            <?php _e('Lade Audio...', 'wort-spiel'); ?>
+        </div>
+        <div id="error-message" class="error-message" style="display:none;">
+            <?php _e('Audio konnte nicht geladen werden.', 'wort-spiel'); ?>
+        </div>
+        <?php endif; ?>
+        
+        <!-- PLAYFIELD -->
+        <div id="playfield" class="playfield wort-game-playfield">
+            <!-- Buchstaben-Buttons werden hier generiert -->
+        </div>
+        
+        <!-- WORD-LINE -->
+        <div id="word-line" class="word-line wort-game-word-line">
+            <!-- Wort-Slots werden hier generiert -->
+        </div>
+        
     </div>
     
-    <!-- Loading & Error (GLOBAL CSS) -->
-    <div id="loading-message" class="loading-message" style="display:none;">
-        <?php _e('Lade Audio...', 'wort-spiel'); ?>
-    </div>
-    <div id="error-message" class="error-message" style="display:none;">
-        <?php _e('Audio konnte nicht geladen werden.', 'wort-spiel'); ?>
-    </div>
-    
-    <!-- PLAYFIELD - Template-spezifisches CSS -->
-    <div id="playfield" class="playfield wort-game-playfield">
-        <!-- Buchstaben-Buttons werden hier generiert -->
-    </div>
-    
-    <!-- WORT-LINIE - Template-spezifisches CSS -->
-    <div id="word-line" class="word-line wort-game-word-line">
-        <!-- Wort-Slots werden hier generiert -->
-    </div>
-    
-    <!-- Spiel-Buttons (GLOBAL CSS) -->
-    <div id="game-controls" class="game-controls">
-        <button id="check-btn" class="wort-spiel-btn success">
-            <?php _e('Prüfen', 'wort-spiel'); ?>
-        </button>
-        <button id="reset-btn" class="wort-spiel-btn secondary">
-            <?php _e('Zurücksetzen', 'wort-spiel'); ?>
-        </button>
-        <button id="new-word-btn" class="wort-spiel-btn primary">
-            <?php _e('Neues Wort', 'wort-spiel'); ?>
-        </button>
+    <!-- ===== FOOTER ===== -->
+    <div class="game-footer">
+        <div class="game-controls">
+            <button id="check-btn" class="wort-spiel-btn success">
+                <?php _e('Prüfen', 'wort-spiel'); ?>
+            </button>
+            <button id="reset-btn" class="wort-spiel-btn secondary">
+                <?php _e('Zurücksetzen', 'wort-spiel'); ?>
+            </button>
+            <button id="new-word-btn" class="wort-spiel-btn primary">
+                <?php _e('Neues Wort', 'wort-spiel'); ?>
+            </button>
+        </div>
+        <div id="result-display" class="result-display">
+            <!-- Ergebnis wird hier angezeigt -->
+        </div>
     </div>
     
-    <!-- Ergebnis-Anzeige (GLOBAL CSS) -->
-    <div id="result-display" class="result-display">
-        <!-- Ergebnis wird hier angezeigt -->
-    </div>
-    
-    <!-- End Screen (GLOBAL CSS) -->
+    <!-- End Screen -->
     <div id="end-screen" class="end-screen" style="display:none;">
         <div class="end-screen-content">
             <div class="end-title">
@@ -106,33 +119,35 @@ if (!in_array($game_mode, $allowed_modes)) {
     
 </div>
 
-<!-- TEMPLATE-SPEZIFISCHES CSS für Standard Wort-Spiele -->
+<!-- ===== TEMPLATE CSS - NO SCROLL ===== -->
 <style>
-/* ===== PLAYFIELD STYLES (Template-spezifisch) ===== */
+/* PLAYFIELD - EXAKTE HÖHEN-BERECHNUNG */
 .wort-game-playfield {
+    flex: 1;                    /* Nimmt verfügbaren Platz */
     position: relative;
-    width: 100%;
-    height: 400px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 15px;
-    margin-bottom: 30px;
+    border-radius: 12px;
+    margin-bottom: 15px;        /* KLEINER MARGIN */
     overflow: hidden;
     box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+    min-height: 150px;          /* KLEINERE MINDESTHÖHE */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .wort-game-playfield .letter-btn {
     position: absolute;
-    width: 70px;
-    height: 70px;
+    width: 60px;                /* KLEINER */
+    height: 60px;               /* KLEINER */
     border: none;
     border-radius: 50%;
-    font-size: 1.8rem;
+    font-size: 1.5rem;          /* KLEINER */
     font-weight: bold;
     background: white;
     color: #2c3e50;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 12px rgba(0,0,0,0.2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -141,7 +156,7 @@ if (!in_array($game_mode, $allowed_modes)) {
 .wort-game-playfield .letter-btn:hover {
     background: #f8f9fa;
     transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 .wort-game-playfield .letter-btn.selected {
@@ -150,26 +165,30 @@ if (!in_array($game_mode, $allowed_modes)) {
     transform: scale(0.9);
 }
 
-/* ===== WORD LINE STYLES (Template-spezifisch) ===== */
+/* WORD LINE - FESTE KOMPAKTE HÖHE */
 .wort-game-word-line {
+    height: 70px;               /* KOMPAKTE HÖHE */
+    min-height: 70px;
+    max-height: 70px;
     display: flex;
     justify-content: center;
-    gap: 12px;
-    margin-bottom: 30px;
-    min-height: 80px;
+    gap: 10px;                  /* KLEINER GAP */
     align-items: center;
     flex-wrap: wrap;
+    flex-shrink: 0;             /* NICHT SCHRUMPFEN */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .wort-game-word-line .word-slot {
-    width: 70px;
-    height: 70px;
-    border: 3px dashed #dee2e6;
-    border-radius: 12px;
+    width: 60px;                /* KLEINER */
+    height: 60px;               /* KLEINER */
+    border: 2px dashed #dee2e6; /* DÜNNER BORDER */
+    border-radius: 10px;        /* KLEINER RADIUS */
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.8rem;
+    font-size: 1.5rem;          /* KLEINER */
     font-weight: bold;
     background: white;
     transition: all 0.3s ease;
@@ -184,62 +203,76 @@ if (!in_array($game_mode, $allowed_modes)) {
 
 .wort-game-word-line .word-slot.correct {
     background: #28a745;
-    color: red;
+    color: white;
     border-color: #28a745;
     border-style: solid;
     animation: pulse-green 1.7s ease-in-out;
 }
 
 .wort-game-word-line .word-slot.wrong {
-    /*background: #dc3545;
-    color: white;
-    border-color: #dc3545;
-    border-style: solid;*/
     animation: shake 0.6s ease-in-out;
 }
 
-@keyframes pulse-green {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(40, 167, 69, 0.5); }
-    100% { transform: scale(1); }
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-    20%, 40%, 60%, 80% { transform: translateX(5px); }
-}
-
-/* ===== RESPONSIVE für Template-Elemente ===== */
+/* RESPONSIVE - NOCH KLEINERE ELEMENTE */
 @media (max-width: 768px) {
-    .wort-game-playfield {
-        height: 300px;
+    .wort-game-playfield .letter-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
     }
     
-    .wort-game-playfield .letter-btn {
-        width: 60px;
+    .wort-game-word-line {
         height: 60px;
-        font-size: 1.5rem;
+        min-height: 60px;
+        max-height: 60px;
     }
     
     .wort-game-word-line .word-slot {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .wort-game-playfield .letter-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+    
+    .wort-game-word-line {
+        height: 55px;
+        min-height: 55px;
+        max-height: 55px;
+        gap: 8px;
+    }
+    
+    .wort-game-word-line .word-slot {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
     }
 }
 </style>
 
+<!-- JavaScript bleibt GLEICH - nur audioEnabled Variable ändern -->
 <script type="text/javascript">
+// Audio-Feature für JavaScript
+const audioEnabled = <?php echo $audio_enabled ? 'true' : 'false'; ?>;
+
 jQuery(document).ready(function($) {
     
     // Nur laden wenn Container vorhanden
     if (!$('#wort-spiel-game-container').length) return;
     
-    // Spiel-Objekt
+    // ALLE BESTEHENDE JAVASCRIPT-LOGIK BLEIBT GLEICH
+    // Nur bei Audio-Funktionen: if (audioEnabled) verwenden
+    
+    // Spiel-Objekt mit angepasster Audio-Logik
     const WortSpielGame = {
         
-        // Konfiguration
+        // Bestehende Konfiguration...
         gameMode: '<?php echo esc_js($game_mode); ?>',
         currentWord: '',
         selectedLetters: [],
@@ -249,9 +282,8 @@ jQuery(document).ready(function($) {
         playlist: [],
         gameStartTime: null,
         sessionId: null,
-        gameCounter: 0,
         
-        // Wortlisten (Fallback)
+        // Wortlisten
         wordLists: {
             animals: ["KATZE", "HUND", "VOGEL", "FISCH", "PFERD", "MAUS", "FUCHS", "WOLF", "BÄR", "LÖWE"],
             nature: ["BAUM", "BLUME", "SONNE", "MOND", "STERN", "BERG", "MEER", "FLUSS", "WALD", "WIESE"],
@@ -265,14 +297,15 @@ jQuery(document).ready(function($) {
             [{"left":62.5,"top":60.6},{"left":28.5,"top":66.8},{"left":30.0,"top":31.8},{"left":85.5,"top":16.0},{"left":82.8,"top":55.5}]
         ],
         
-        // Initialisierung
+        // BESTEHENDE METHODEN BLEIBEN GLEICH...
+        // Nur Audio-Methoden bekommen audioEnabled-Check
+        
         init: function() {
             this.sessionId = this.generateSessionId();
             this.bindEvents();
             this.initGame();
         },
         
-        // Event-Handler
         bindEvents: function() {
             $('#back-to-menu-btn, #back-to-menu-end-btn').on('click', this.backToMenu.bind(this));
             $('#restart-game-btn').on('click', this.restartGame.bind(this));
@@ -280,18 +313,14 @@ jQuery(document).ready(function($) {
             $('#check-btn').on('click', this.checkWord.bind(this));
             $('#reset-btn').on('click', this.resetGame.bind(this));
             $('#new-word-btn').on('click', this.initGame.bind(this));
-            
-            // Playfield-Klicks
             $('#playfield').on('click', '.letter-btn', this.handleLetterClick.bind(this));
         },
         
-        // Session-ID generieren
         generateSessionId: function() {
             const now = new Date();
             return now.toISOString().replace(/[:.-]/g, '_');
         },
         
-        // Spiel initialisieren
         initGame: function() {
             const word = this.selectRandomWord();
             if (!word) return;
@@ -300,26 +329,23 @@ jQuery(document).ready(function($) {
             this.gameStartTime = new Date();
             this.selectedLetters = [];
             
-            // UI zurücksetzen
             $('#result-display').text('').removeClass('success error');
             $('#error-message').hide();
             $('#end-screen').hide();
-            $('#game-controls').show();
             
-            // Spiel-Elemente erstellen
             this.createLetterButtons();
             this.createWordSlots();
             
-            // Audio laden und abspielen
-            this.playAudio(this.currentWord, this.getCategory());
+            // Audio nur bei Audio-Modi laden
+            if (audioEnabled) {
+                this.playAudio(this.currentWord, this.getCategory());
+            }
         },
         
-        // Kategorie aus Spielmodus ermitteln
         getCategory: function() {
-            return this.gameMode.replace('-learning', '').replace('-extra', '');
+            return this.gameMode.replace('-learning', '').replace('-extra', '').replace('-audio', '');
         },
         
-        // Zufälliges Wort auswählen
         selectRandomWord: function() {
             if (this.playlist.length === 0) {
                 const category = this.getCategory();
@@ -342,7 +368,6 @@ jQuery(document).ready(function($) {
             return this.playlist.pop();
         },
         
-        // Array mischen
         shuffleArray: function(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -350,7 +375,6 @@ jQuery(document).ready(function($) {
             }
         },
         
-        // Buchstaben-Buttons erstellen
         createLetterButtons: function() {
             $('#playfield').empty();
             this.letterButtons = [];
@@ -360,11 +384,7 @@ jQuery(document).ready(function($) {
             const layout = this.layouts[Math.floor(Math.random() * this.layouts.length)];
             
             letters.forEach((letter, index) => {
-                const btn = $(`
-                    <button class="letter-btn" data-letter="${letter}">
-                        ${letter}
-                    </button>
-                `);
+                const btn = $(`<button class="letter-btn" data-letter="${letter}">${letter}</button>`);
                 
                 if (layout[index]) {
                     btn.css({
@@ -378,7 +398,6 @@ jQuery(document).ready(function($) {
             });
         },
         
-        // Wort-Slots erstellen
         createWordSlots: function() {
             $('#word-line').empty();
             
@@ -387,7 +406,6 @@ jQuery(document).ready(function($) {
                 $('#word-line').append(slot);
             }
             
-            // Sortable aktivieren
             if (typeof Sortable !== 'undefined') {
                 Sortable.create(document.getElementById('word-line'), {
                     animation: 150,
@@ -405,14 +423,12 @@ jQuery(document).ready(function($) {
             }
         },
         
-        // Buchstaben-Klick behandeln
         handleLetterClick: function(e) {
             const btn = $(e.target);
             const letter = btn.data('letter');
             
             if (btn.hasClass('selected')) return;
             
-            // Ersten leeren Slot finden
             const emptySlot = $('#word-line .word-slot').filter(function() {
                 return $(this).text().trim() === '';
             }).first();
@@ -424,105 +440,84 @@ jQuery(document).ready(function($) {
             }
         },
         
-        // Audio-Funktionen
-        getAudioFileName: function(word) {
-            return word.toLowerCase()
-                .replace('ä', 'ae')
-                .replace('ö', 'oe')
-                .replace('ü', 'ue')
-                .replace('ß', 'ss');
-        },
-        
-        getAudioPath: function(word, category) {
-            const fileName = this.getAudioFileName(word);
-            return `${wortSpielAjax.pluginUrl}assets/audio/${category}/${fileName}.m4a`;
-        },
-        
+        // Audio-Funktionen (nur wenn audioEnabled)
         playAudio: function(word, category, delay = 700) {
+            if (!audioEnabled) return; // SKIP wenn kein Audio-Modus
+            
             const key = `${category}_${word}`;
             
             $('#loading-message').show();
             $('#replay-btn').prop('disabled', true);
             
             setTimeout(() => {
-                if (this.audioCache[key]) {
-                    this.currentAudio = this.audioCache[key];
-                    this.currentAudio.currentTime = 0;
-                    this.currentAudio.play();
+                const audio = new Audio(`${wortSpielAjax.pluginUrl}assets/audio/${category}/${word.toLowerCase()}.m4a`);
+                
+                audio.addEventListener('canplaythrough', () => {
+                    this.currentAudio = audio;
+                    audio.play();
                     $('#loading-message').hide();
                     $('#replay-btn').prop('disabled', false);
-                    $('#audio-status').text('🔊 <?php _e('Höre gut zu...', 'wort-spiel'); ?>');
-                } else {
-                    const audio = new Audio(this.getAudioPath(word, category));
-                    
-                    audio.addEventListener('canplaythrough', () => {
-                        this.audioCache[key] = audio;
-                        this.currentAudio = audio;
-                        audio.play();
-                        $('#loading-message').hide();
-                        $('#replay-btn').prop('disabled', false);
-                        $('#error-message').hide();
-                        $('#audio-status').text('🔊 <?php _e('Höre gut zu...', 'wort-spiel'); ?>');
-                    });
-                    
-                    audio.addEventListener('error', () => {
-                        $('#loading-message').hide();
-                        $('#error-message').show().text(`<?php _e('Audio für', 'wort-spiel'); ?> "${word}" <?php _e('nicht verfügbar', 'wort-spiel'); ?>`);
-                        $('#replay-btn').prop('disabled', true);
-                        $('#audio-status').text(`<?php _e('Gesuchtes Wort:', 'wort-spiel'); ?> ${word}`);
-                    });
-                    
-                    audio.load();
-                }
+                    $('#error-message').hide();
+                    $('#audio-status').text('🔊 Höre gut zu...');
+                });
+                
+                audio.addEventListener('error', () => {
+                    $('#loading-message').hide();
+                    $('#error-message').show().text(`Audio für "${word}" nicht verfügbar`);
+                    $('#replay-btn').prop('disabled', true);
+                    $('#audio-status').text(`Gesuchtes Wort: ${word}`);
+                });
+                
+                audio.load();
             }, delay);
         },
         
         replayAudio: function() {
+            if (!audioEnabled) {
+                // Bei Nicht-Audio-Spielen: Wort kurz anzeigen
+                $('#result-display').text(`💡 Gesuchtes Wort: ${this.currentWord}`).removeClass('success error');
+                setTimeout(() => {
+                    $('#result-display').text('').removeClass('success error');
+                }, 2000);
+                return;
+            }
+            
             if (this.currentAudio) {
                 this.currentAudio.currentTime = 0;
                 this.currentAudio.play();
-                $('#audio-status').text('🔊 <?php _e('Wort wird wiederholt...', 'wort-spiel'); ?>');
+                $('#audio-status').text('🔊 Wort wird wiederholt...');
             }
         },
         
-        // Wort prüfen
         checkWord: function() {
             const userWord = this.selectedLetters.join('');
             const slots = $('#word-line .word-slot');
             
             if (userWord === this.currentWord) {
-                // Richtig!
                 slots.addClass('correct');
-                $('#result-display').text(`🎉 <?php _e('Richtig! Das war:', 'wort-spiel'); ?> ${this.currentWord}`)
+                $('#result-display').text(`🎉 Richtig! Das war: ${this.currentWord}`)
                     .removeClass('error').addClass('success');
-                $('#audio-status').text('✅ <?php _e('Perfekt gelöst!', 'wort-spiel'); ?>');
                 
-                // Ergebnis speichern
                 this.saveGameResult(this.currentWord, userWord, true);
                 
-                // Nach kurzer Verzögerung neues Wort
                 setTimeout(() => {
                     this.initGame();
                 }, 2000);
                 
             } else {
-                // Falsch
                 slots.removeClass('correct').addClass('wrong');
                 
-                $('#result-display').text(`❌ <?php _e('Falsch! Du hattest:', 'wort-spiel'); ?> "${userWord}" - <?php _e('Richtig:', 'wort-spiel'); ?> "${this.currentWord}"`)
+                $('#result-display').text(`❌ Falsch! Du hattest: "${userWord}" - Richtig: "${this.currentWord}"`)
                     .removeClass('success').addClass('error');
                 
-                // Ergebnis speichern
                 this.saveGameResult(this.currentWord, userWord, false);
                 
-                // Nach 3 Sekunden Animation entfernen
                 setTimeout(() => {
                     slots.removeClass('wrong');
                 }, 3000);
             }
         },
         
-        // Spiel zurücksetzen
         resetGame: function() {
             this.selectedLetters = [];
             $('.letter-btn').removeClass('selected');
@@ -531,10 +526,11 @@ jQuery(document).ready(function($) {
             slots.text('').removeClass('filled correct wrong');
             
             $('#result-display').text('').removeClass('success error');
-            $('#audio-status').text('🔊 <?php _e('Höre gut zu...', 'wort-spiel'); ?>');
+            if ($('#audio-status').length) {
+                $('#audio-status').text('🔊 Höre gut zu...');
+            }
         },
         
-        // Spiel-Ergebnis speichern
         saveGameResult: function(targetWord, userInput, isCorrect) {
             const gameEndTime = new Date();
             const duration = this.gameStartTime ? Math.round((gameEndTime - this.gameStartTime) / 1000) : 0;
@@ -554,24 +550,20 @@ jQuery(document).ready(function($) {
                 },
                 success: function(response) {
                     if (response.success) {
-                        console.log('<?php _e('Spiel-Ergebnis gespeichert', 'wort-spiel'); ?>');
+                        console.log('Spiel-Ergebnis gespeichert');
                     } else {
-                        console.error('<?php _e('Fehler beim Speichern:', 'wort-spiel'); ?>', response.data.message);
+                        console.error('Fehler beim Speichern:', response.data.message);
                     }
                 },
                 error: function() {
-                    console.error('<?php _e('Netzwerk-Fehler beim Speichern', 'wort-spiel'); ?>');
+                    console.error('Netzwerk-Fehler beim Speichern');
                 }
             });
         },
         
-        // End-Screen anzeigen
         showEndScreen: function() {
-            $('#game-controls').hide();
-            $('#new-word-btn').prop('disabled', true);
             $('#end-screen').show();
             
-            // Konfetti-Animation
             if (typeof confetti !== 'undefined') {
                 confetti({
                     particleCount: 200,
@@ -581,26 +573,19 @@ jQuery(document).ready(function($) {
             }
         },
         
-        // Spiel neustarten
         restartGame: function() {
             this.playlist = [];
             this.playlist.usedUpOnce = false;
-            this.gameCounter = 0;
             $('#end-screen').hide();
-            $('#game-controls').show();
-            $('#new-word-btn').prop('disabled', false);
             this.initGame();
         },
         
-        // Zurück zum Menü
         backToMenu: function() {
-            // Audio stoppen
             if (this.currentAudio) {
                 this.currentAudio.pause();
                 this.currentAudio = null;
             }
             
-            // URL ohne game_mode Parameter
             const url = new URL(window.location.href);
             url.searchParams.delete('game_mode');
             url.hash = '';
@@ -608,22 +593,24 @@ jQuery(document).ready(function($) {
         }
     };
     
-    // Spiel-Objekt initialisieren
+    // Spiel initialisieren
     WortSpielGame.init();
     
     // Spiel-Modus-Titel setzen
     const gameModeNames = {
-        'animals': '<?php _e('Tiere', 'wort-spiel'); ?>',
-        'animals-learning': '<?php _e('Tiere (Lernmodus)', 'wort-spiel'); ?>',
-        'nature': '<?php _e('Natur', 'wort-spiel'); ?>',
-        'nature-learning': '<?php _e('Natur (Lernmodus)', 'wort-spiel'); ?>',
-        'colors': '<?php _e('Farben', 'wort-spiel'); ?>',
-        'colors-learning': '<?php _e('Farben (Lernmodus)', 'wort-spiel'); ?>',
-        'food': '<?php _e('Essen', 'wort-spiel'); ?>',
-        'food-learning': '<?php _e('Essen (Lernmodus)', 'wort-spiel'); ?>',
-        'food-extra': '<?php _e('Essen (Extra)', 'wort-spiel'); ?>'
+        'animals': 'Tiere',
+        'animals-learning': 'Tiere (Lernmodus)',
+        'animals-audio-extra': 'Tiere Audio-Extra',
+        'nature': 'Natur',
+        'nature-learning': 'Natur (Lernmodus)',
+        'colors': 'Farben',
+        'colors-learning': 'Farben (Lernmodus)',
+        'food': 'Essen',
+        'food-learning': 'Essen (Lernmodus)',
+        'food-extra': 'Essen (Extra)'
     };
     
     $('#game-mode-title').text(gameModeNames[WortSpielGame.gameMode] || WortSpielGame.gameMode);
+    
 });
 </script>

@@ -1,8 +1,11 @@
 /* 
  * Wort-Spiel WordPress Plugin Styles
+ * NEUE LAYOUT-SYSTEM Version 2.0
  * 
  * @package WortSpiel
  */
+
+/* ===== NEUES 3-BEREICHE LAYOUT-SYSTEM ===== */
 
 /* Reset und Basis */
 .wort-spiel-menu *,
@@ -10,9 +13,318 @@
     box-sizing: border-box;
 }
 
-/* Container */
-.wort-spiel-menu,
+/* HAUPT-CONTAINER (NEU) - GANZE BREITE + NO SCROLL */
 .wort-spiel-game {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;              /* Vollbild-Höhe */
+    width: 100vw;               /* GANZE BREITE */
+    max-width: none;            /* KEIN MAX-WIDTH */
+    margin: 0;                  /* KEIN MARGIN */
+    padding: 0;                 /* KEIN PADDING */
+    overflow: hidden;           /* Kein Scrollen */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #f8f9fa;
+    box-shadow: none;           /* Kein Shadow bei Vollbild */
+    border-radius: 0;           /* Kein Radius bei Vollbild */
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    position: fixed;            /* FIXED POSITIONING */
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+/* HEADER (OBEN) - MEHR ABSTAND */
+.game-header {
+    height: 100px;              /* GRÖSSER: 100px statt 80px */
+    min-height: 100px;
+    max-height: 100px;
+    background: #ffffff;
+    border-bottom: 2px solid #dee2e6;
+    padding: 15px 25px;         /* MEHR PADDING */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;                  /* MEHR GAP */
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.game-header .header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;                  /* MEHR GAP */
+    flex-shrink: 0;
+}
+
+.game-header .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;                  /* MEHR GAP */
+    flex-shrink: 0;
+}
+
+.game-header h2 {
+    margin: 0;
+    font-size: 1.4rem;          /* ETWAS GRÖSSER */
+    color: #2c3e50;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.player-info {
+    font-size: 0.9rem;          /* ETWAS GRÖSSER */
+    color: #6c757d;
+    white-space: nowrap;
+}
+
+/* GAME-CONTENT (MITTE) - ANGEPASST FÜR GRÖSSERE HEADER/FOOTER */
+.game-content {
+    height: calc(100vh - 200px); /* 100vh - (Header 100px + Footer 100px) */
+    min-height: calc(100vh - 200px);
+    max-height: calc(100vh - 200px);
+    padding: 20px;              /* MEHR PADDING */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    background: #f8f9fa;
+    flex-shrink: 0;
+}
+
+/* FOOTER (UNTEN) - MEHR ABSTAND */
+.game-footer {
+    height: 100px;              /* GRÖSSER: 100px statt 80px */
+    min-height: 100px;
+    max-height: 100px;
+    background: #ffffff;
+    border-top: 2px solid #dee2e6;
+    padding: 15px 25px;         /* MEHR PADDING */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;                  /* MEHR GAP */
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.game-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;                  /* MEHR GAP */
+    flex-wrap: nowrap;
+}
+
+.result-display {
+    text-align: center;
+    min-height: 30px;           /* ETWAS GRÖSSER */
+    font-weight: bold;
+    font-size: 1.1rem;          /* GRÖSSER */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;               /* MEHR PADDING */
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.result-display.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;  /* DÜNNER BORDER */
+}
+
+.result-display.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;  /* DÜNNER BORDER */
+}
+
+/* ===== BUTTONS (GLOBAL) - GRÖSSERE BUTTONS ===== */
+.wort-spiel-btn {
+    padding: 12px 24px;         /* GRÖSSER */
+    border: none;
+    border-radius: 8px;         /* GRÖSSERER RADIUS */
+    font-size: 1rem;            /* GRÖSSER */
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 120px;           /* GRÖSSER */
+    font-family: inherit;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.wort-spiel-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);  /* WENIGER SHADOW */
+}
+
+.wort-spiel-btn:active {
+    transform: translateY(0);
+}
+
+.wort-spiel-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Button Varianten */
+.back-btn {
+    background: #6c757d;
+    color: white;
+}
+
+.back-btn:hover {
+    background: #5a6268;
+}
+
+.audio-btn {
+    background: #17a2b8;
+    color: white;
+}
+
+.audio-btn:hover {
+    background: #138496;
+}
+
+.wort-spiel-btn.primary {
+    background: #007cba;
+    color: white;
+}
+
+.wort-spiel-btn.primary:hover {
+    background: #005a87;
+}
+
+.wort-spiel-btn.success {
+    background: #28a745;
+    color: white;
+}
+
+.wort-spiel-btn.success:hover {
+    background: #1e7e34;
+}
+
+.wort-spiel-btn.secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.wort-spiel-btn.secondary:hover {
+    background: #5a6268;
+}
+
+.wort-spiel-btn.admin {
+    background: #17a2b8;
+    color: white;
+}
+
+.wort-spiel-btn.admin:hover {
+    background: #117a8b;
+}
+
+.wort-spiel-btn.logout {
+    background: #dc3545;
+    color: white;
+}
+
+.wort-spiel-btn.logout:hover {
+    background: #c82333;
+}
+
+/* ===== AUDIO DISPLAY - MEHR ABSTAND ===== */
+.audio-display {
+    text-align: center;
+    margin-bottom: 20px;        /* MEHR MARGIN */
+    padding: 15px;              /* MEHR PADDING */
+    background: rgba(255,255,255,0.9);
+    border-radius: 10px;
+    border: 2px solid #e9ecef;  /* DICKERER BORDER */
+    flex-shrink: 0;
+}
+
+.audio-status {
+    font-size: 1.1rem;          /* GRÖSSER */
+    margin-bottom: 10px;        /* MEHR MARGIN */
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+/* LOADING & ERROR MESSAGES - MEHR ABSTAND */
+.loading-message,
+.error-message {
+    text-align: center;
+    padding: 12px;              /* MEHR PADDING */
+    border-radius: 8px;
+    margin-bottom: 15px;        /* MEHR MARGIN */
+    font-weight: 500;
+    font-size: 1rem;            /* GRÖSSER */
+}
+
+.loading-message {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.error-message {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* ===== END SCREEN ===== */
+.end-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.end-screen-content {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: popup 0.5s ease-out;
+}
+
+.end-title {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    color: #28a745;
+    font-weight: bold;
+}
+
+.end-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+@keyframes popup {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* ===== MENÜ-SYSTEM (Alt - bleibt unverändert) ===== */
+
+/* Container für Menü */
+.wort-spiel-menu {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background: #f8f9fa;
     border-radius: 12px;
@@ -24,7 +336,7 @@
     touch-action: manipulation;
 }
 
-/* Header */
+/* Header für Menü */
 .wort-spiel-header {
     text-align: center;
     margin-bottom: 40px;
@@ -43,7 +355,7 @@
     margin-bottom: 20px;
 }
 
-/* Loading */
+/* Loading für Menü */
 .loading-message {
     text-align: center;
     font-size: 1.2rem;
@@ -139,169 +451,14 @@
     margin-top: 30px;
 }
 
-/* Buttons */
-.wort-spiel-btn {
-    display: inline-block;
-    padding: 12px 24px;
-    font-size: 1rem;
-    font-weight: 500;
-    text-decoration: none;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-    min-width: 120px;
-}
+/* ===== ALTE GAME-STYLES (werden überschrieben) ===== */
 
-.wort-spiel-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.wort-spiel-btn:active {
-    transform: translateY(0);
-}
-
-.wort-spiel-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none !important;
-}
-
-/* Button Varianten */
-.wort-spiel-btn.primary {
-    background: #007cba;
-    color: white;
-}
-
-.wort-spiel-btn.primary:hover {
-    background: #005a87;
-}
-
-.wort-spiel-btn.secondary {
-    background: #6c757d;
-    color: white;
-}
-
-.wort-spiel-btn.secondary:hover {
-    background: #545b62;
-}
-
-.wort-spiel-btn.success {
-    background: #28a745;
-    color: white;
-}
-
-.wort-spiel-btn.success:hover {
-    background: #1e7e34;
-}
-
-.wort-spiel-btn.admin {
-    background: #17a2b8;
-    color: white;
-}
-
-.wort-spiel-btn.admin:hover {
-    background: #117a8b;
-}
-
-.wort-spiel-btn.logout {
-    background: #dc3545;
-    color: white;
-}
-
-.wort-spiel-btn.logout:hover {
-    background: #c82333;
-}
-
-.wort-spiel-btn.back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: #6c757d;
-    color: white;
-    padding: 10px 20px;
-    font-size: 0.9rem;
-    z-index: 10;
-}
-
-/* Game Spezific Styles */
-.wort-spiel-game {
-    position: relative;
-    min-height: 600px;
-}
-
-.game-header {
-    text-align: center;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #e9ecef;
-}
-
-.game-header h2 {
-    color: #2c3e50;
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.player-info {
-    color: #6c757d;
-    font-size: 1.1rem;
-}
-
-/* Audio Display */
-.audio-display {
-    text-align: center;
-    margin-bottom: 30px;
-    padding: 25px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-}
-
-.audio-status {
-    font-size: 1.3rem;
-    color: #2c3e50;
-    margin-bottom: 15px;
-    font-weight: 500;
-}
-
-#replay-btn {
-    font-size: 1.1rem;
-    padding: 15px 30px;
-}
-
-/* Error/Loading Messages */
-.error-message,
-.loading-message {
-    text-align: center;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-weight: 500;
-}
-
-.error-message {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.loading-message {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-/* Playfield */
+/* Alte Playfield/Word-Line Styles - werden von Templates überschrieben */
 .playfield {
     position: relative;
     width: 100%;
-    height: 400px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 15px;
-    margin-bottom: 30px;
     overflow: hidden;
     box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
 }
@@ -341,8 +498,6 @@
     display: flex;
     justify-content: center;
     gap: 12px;
-    margin-bottom: 30px;
-    min-height: 80px;
     align-items: center;
     flex-wrap: wrap;
 }
@@ -373,17 +528,14 @@
     color: white;
     border-color: #28a745;
     border-style: solid;
-    animation: pulse-green 0.6s ease-in-out;
+    animation: pulse-green 1.7s ease-in-out;
 }
 
-/*.word-slot.wrong {
-    background: #dc3545;
-    color: white;
-    border-color: #dc3545;
-    border-style: solid;
+.word-slot.wrong {
     animation: shake 0.6s ease-in-out;
-}*/
+}
 
+/* ===== ANIMATIONEN ===== */
 @keyframes pulse-green {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(40, 167, 69, 0.5); }
@@ -396,90 +548,7 @@
     20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
-/* Game Controls */
-.game-controls {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 30px;
-    flex-wrap: wrap;
-}
-
-.game-controls .wort-spiel-btn {
-    min-width: 140px;
-    font-size: 1.1rem;
-    padding: 15px 25px;
-}
-
-/* Result Display */
-.result-display {
-    text-align: center;
-    font-size: 1.3rem;
-    font-weight: bold;
-    min-height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    padding: 15px;
-    border-radius: 10px;
-    transition: all 0.3s ease;
-}
-
-.result-display.success {
-    background: #d4edda;
-    color: #155724;
-    border: 2px solid #c3e6cb;
-}
-
-.result-display.error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 2px solid #f5c6cb;
-}
-
-/* End Screen */
-.end-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.end-screen-content {
-    background: white;
-    padding: 50px 40px;
-    border-radius: 20px;
-    text-align: center;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    animation: popup 0.5s ease-out;
-}
-
-@keyframes popup {
-    0% { transform: scale(0.5); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-.end-title {
-    font-size: 2rem;
-    color: #28a745;
-    margin-bottom: 30px;
-    font-weight: bold;
-}
-
-.end-actions {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-}
-
-/* Modal */
+/* ===== STATS & MODAL (Alt - bleibt) ===== */
 .wort-spiel-modal {
     position: fixed;
     top: 0;
@@ -519,7 +588,6 @@
     color: #2c3e50;
 }
 
-/* Stats */
 .stats-overview {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -547,7 +615,6 @@
     font-size: 0.9rem;
 }
 
-/* Game History */
 .recent-games {
     max-height: 300px;
     overflow-y: auto;
@@ -583,11 +650,55 @@
     color: #6c757d;
 }
 
-/* Responsive Design */
+/* ===== RESPONSIVE DESIGN - ANGEPASST ===== */
 @media (max-width: 768px) {
-    .wort-spiel-menu,
     .wort-spiel-game {
+        height: 100vh;
+    }
+    
+    .game-header,
+    .game-footer {
+        height: 85px;           /* ETWAS GRÖSSER ALS VORHER */
+        min-height: 85px;
+        max-height: 85px;
+        padding: 12px 20px;     /* MEHR PADDING */
+    }
+    
+    .game-content {
+        height: calc(100vh - 170px); /* 100vh - (Header 85px + Footer 85px) */
+        min-height: calc(100vh - 170px);
+        max-height: calc(100vh - 170px);
+        padding: 15px;          /* MEHR PADDING */
+    }
+    
+    .game-header h2 {
+        font-size: 1.2rem;      /* GRÖSSER */
+    }
+    
+    .player-info {
+        font-size: 0.8rem;      /* GRÖSSER */
+    }
+    
+    .wort-spiel-btn {
+        padding: 10px 20px;     /* GRÖSSERE BUTTONS */
+        font-size: 0.9rem;      /* GRÖSSER */
+        min-width: 100px;       /* GRÖSSER */
+    }
+    
+    .game-header .header-left,
+    .game-header .header-right {
+        gap: 15px;              /* MEHR GAP */
+    }
+    
+    .game-controls {
+        gap: 12px;              /* MEHR GAP */
+    }
+    
+    /* Menü-Responsive bleibt gleich */
+    .wort-spiel-menu {
         padding: 20px 15px;
+        margin: 0;
+        border-radius: 0;
     }
     
     .wort-spiel-header h1 {
@@ -608,10 +719,7 @@
         min-width: 200px;
     }
     
-    .playfield {
-        height: 300px;
-    }
-    
+    /* Alte Game Styles Mobile */
     .letter-btn {
         width: 60px;
         height: 60px;
@@ -622,15 +730,6 @@
         width: 60px;
         height: 60px;
         font-size: 1.5rem;
-    }
-    
-    .game-controls {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .game-controls .wort-spiel-btn {
-        min-width: 200px;
     }
     
     .end-screen-content {
@@ -653,6 +752,44 @@
 }
 
 @media (max-width: 480px) {
+    .game-header,
+    .game-footer {
+        height: 75px;           /* GRÖSSER ALS VORHER */
+        min-height: 75px;
+        max-height: 75px;
+        padding: 10px 15px;     /* MEHR PADDING */
+    }
+    
+    .game-content {
+        height: calc(100vh - 150px); /* 100vh - (Header 75px + Footer 75px) */
+        min-height: calc(100vh - 150px);
+        max-height: calc(100vh - 150px);
+        padding: 12px;          /* MEHR PADDING */
+    }
+    
+    .game-header h2 {
+        font-size: 1.1rem;      /* GRÖSSER */
+    }
+    
+    .player-info {
+        font-size: 0.75rem;     /* GRÖSSER */
+    }
+    
+    .wort-spiel-btn {
+        padding: 8px 16px;      /* GRÖSSERE BUTTONS */
+        font-size: 0.85rem;     /* GRÖSSER */
+        min-width: 80px;        /* GRÖSSER */
+    }
+    
+    .game-controls {
+        gap: 8px;               /* MEHR GAP */
+    }
+    
+    .audio-display {
+        padding: 12px;          /* MEHR PADDING */
+        margin-bottom: 15px;    /* MEHR MARGIN */
+    }
+    
     .wort-spiel-header h1 {
         font-size: 1.7rem;
     }
@@ -665,16 +802,8 @@
         font-size: 1.2rem;
     }
     
-    .game-header h2 {
-        font-size: 1.5rem;
-    }
-    
-    .audio-status {
-        font-size: 1.1rem;
-    }
-    
     .result-display {
-        font-size: 1.1rem;
+        font-size: 1rem;        /* GRÖSSER */
     }
     
     .stats-overview {
