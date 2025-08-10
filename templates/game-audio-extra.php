@@ -49,20 +49,9 @@ if (!in_array($game_mode, $allowed_modes)) {
     <!-- ===== GAME-CONTENT ===== -->
     <div class="game-content">
         
-        <!-- Audio-Anzeige -->
-        <div id="audio-display" class="audio-display">
-            <div id="audio-status" class="audio-status">
-                <?php _e('Höre das Wort und finde die richtigen Buchstaben!', 'wort-spiel'); ?>
-            </div>
-        </div>
+ 
         
-        <!-- Loading & Error Messages -->
-        <div id="loading-message" class="loading-message" style="display:none;">
-            <?php _e('Lade Audio...', 'wort-spiel'); ?>
-        </div>
-        <div id="error-message" class="error-message" style="display:none;">
-            <?php _e('Audio konnte nicht geladen werden.', 'wort-spiel'); ?>
-        </div>
+
         
         <!-- PLAYFIELD -->
         <div id="playfield" class="playfield audio-extra-playfield">
