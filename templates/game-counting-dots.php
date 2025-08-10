@@ -51,25 +51,19 @@ $current_user = wp_get_current_user();
                 <div id="target-number" class="target-number">5</div>
             </div>
             
-            <!-- Solution Slots: 10 + 5 + 5 -->
+            <!-- Solution Slots: 10 horizontal mit Abstand nach 5 -->
             <div class="solution-slots">
-                <!-- Erste Reihe: 10 Slots -->
                 <div class="slot-row">
-                    <?php for($i = 1; $i <= 10; $i++): ?>
+                    <!-- Erste 5 Slots -->
+                    <?php for($i = 1; $i <= 5; $i++): ?>
                         <div class="solution-slot" data-slot-id="<?php echo $i; ?>"></div>
                     <?php endfor; ?>
-                </div>
-                
-                <!-- Zweite Reihe: 5 Slots -->
-                <div class="slot-row">
-                    <?php for($i = 11; $i <= 15; $i++): ?>
-                        <div class="solution-slot" data-slot-id="<?php echo $i; ?>"></div>
-                    <?php endfor; ?>
-                </div>
-                
-                <!-- Dritte Reihe: 5 Slots -->
-                <div class="slot-row">
-                    <?php for($i = 16; $i <= 20; $i++): ?>
+                    
+                    <!-- Abstand -->
+                    <div class="slot-spacer"></div>
+                    
+                    <!-- Zweite 5 Slots -->
+                    <?php for($i = 6; $i <= 10; $i++): ?>
                         <div class="solution-slot" data-slot-id="<?php echo $i; ?>"></div>
                     <?php endfor; ?>
                 </div>
@@ -82,14 +76,15 @@ $current_user = wp_get_current_user();
     <!-- FOOTER -->
     <div class="game-footer">
         <div class="game-controls">
-            <button id="new-round-btn" class="wort-spiel-btn wort-spiel-btn-primary">
-                Neue Runde
-            </button>
-            <button id="check-answer-btn" class="wort-spiel-btn wort-spiel-btn-success">
+
+            <button id="check-answer-btn" class="wort-spiel-btn success">
                 Prüfen
             </button>
-            <button id="clear-all-btn" class="wort-spiel-btn wort-spiel-btn-secondary">
+            <button id="clear-all-btn" class="wort-spiel-btn secondary">
                 Alles löschen
+            </button>
+            <button id="new-round-btn" class="wort-spiel-btn primary">
+                Neue Runde
             </button>
         </div>
         <div id="result-display" class="result-display">
@@ -102,28 +97,28 @@ $current_user = wp_get_current_user();
 <style>
 /* SPIEL-SPEZIFISCHES CSS */
 
-/* Playfield mit Punkten */
+/* Playfield mit verstreuten Dots - wie counting.php */
 .dots-playfield {
-    flex: 2 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 20px !important;
-}
-
-.dots-grid {
-    display: grid !important;
-    grid-template-columns: repeat(5, 1fr) !important;
-    grid-template-rows: repeat(3, 1fr) !important;
-    gap: 15px !important;
-    max-width: 400px !important;
+    flex: 1 !important;
+    position: relative !important;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+    border-radius: 15px !important;
+    overflow: hidden !important;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.1) !important;
+    min-height: 400px !important;
+    height: 100% !important;
     width: 100% !important;
 }
 
+.dots-grid {
+    /* KEIN GRID - Dots werden absolut positioniert */
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
 .dot-item {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    position: absolute !important;
     cursor: pointer !important;
     transition: transform 0.2s ease !important;
 }
@@ -133,26 +128,32 @@ $current_user = wp_get_current_user();
 }
 
 .dot {
-    width: 30px !important;
-    height: 30px !important;
-    background: #4CAF50 !important;
+    width: 40px !important;
+    height: 40px !important;
+    background: white !important;
     border-radius: 50% !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
     transition: all 0.2s ease !important;
+    border: 3px solid #2c3e50 !important;
 }
 
 .dot-item.used .dot {
     background: #ddd !important;
+    border-color: #999 !important;
     cursor: not-allowed !important;
+    opacity: 0.5 !important;
 }
 
-/* Solution Area */
+/* Solution Area - horizontal in der Mitte */
 .solution-area {
-    flex: 1 !important;
+    flex-shrink: 0 !important;
     display: flex !important;
     align-items: center !important;
+    justify-content: center !important;
     padding: 20px !important;
-    gap: 20px !important;
+    gap: 30px !important;
+    background: rgba(255,255,255,0.1) !important;
+    border-top: 2px solid rgba(255,255,255,0.2) !important;
 }
 
 .target-number-display {
@@ -163,65 +164,74 @@ $current_user = wp_get_current_user();
 }
 
 .target-label {
-    font-size: 14px !important;
-    color: #666 !important;
-    margin-bottom: 5px !important;
+    font-size: 16px !important;
+    color: #2c3e50 !important;
+    margin-bottom: 8px !important;
+    font-weight: 600 !important;
 }
 
 .target-number {
     font-size: 48px !important;
     font-weight: bold !important;
     color: #2196F3 !important;
-    background: #f0f8ff !important;
-    border: 2px solid #2196F3 !important;
-    border-radius: 10px !important;
-    padding: 10px 15px !important;
-    min-width: 60px !important;
+    background: white !important;
+    border: 3px solid #2196F3 !important;
+    border-radius: 12px !important;
+    padding: 12px 18px !important;
+    min-width: 70px !important;
     text-align: center !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
 }
 
 .solution-slots {
     flex: 1 !important;
     display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    max-width: 500px !important;
+    justify-content: center !important;
+    max-width: 600px !important;
 }
 
 .slot-row {
     display: flex !important;
-    gap: 8px !important;
-    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.slot-spacer {
+    width: 30px !important;
+    height: 2px !important;
+    background: rgba(255,255,255,0.4) !important;
+    margin: 0 10px !important;
 }
 
 .solution-slot {
-    width: 35px !important;
-    height: 35px !important;
-    border: 2px dashed #ccc !important;
+    width: 45px !important;
+    height: 45px !important;
+    border: 3px dashed rgba(255,255,255,0.6) !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
     transition: all 0.3s ease !important;
-    background: #fafafa !important;
+    background: rgba(255,255,255,0.1) !important;
 }
 
 .solution-slot.filled {
-    border: 2px solid #4CAF50 !important;
-    background: #4CAF50 !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+    border: 3px solid white !important;
+    background: rgba(255,255,255,0.9) !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
 }
 
 .solution-slot.filled .dot {
-    width: 25px !important;
-    height: 25px !important;
-    background: white !important;
+    width: 35px !important;
+    height: 35px !important;
+    background: #4CAF50 !important;
+    border-color: #2e7d32 !important;
 }
 
 /* Animationen */
 .solution-slot.correct {
-    background: #4CAF50 !important;
+    background: rgba(76, 175, 80, 0.9) !important;
     border-color: #4CAF50 !important;
     animation: correctPulse 0.6s ease !important;
 }
@@ -231,33 +241,28 @@ $current_user = wp_get_current_user();
 }
 
 @keyframes correctPulse {
-    0% { transform: scale(1); background: #4CAF50; }
-    50% { transform: scale(1.1); background: #66BB6A; }
-    100% { transform: scale(1); background: #4CAF50; }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
 }
 
 @keyframes wrongShake {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
 }
 
 /* Mobile Anpassungen */
 @media (max-width: 768px) {
-    .dots-grid {
-        grid-template-columns: repeat(5, 1fr) !important;
-        gap: 10px !important;
-        max-width: 300px !important;
-    }
-    
     .dot {
-        width: 25px !important;
-        height: 25px !important;
+        width: 35px !important;
+        height: 35px !important;
     }
     
     .solution-area {
         flex-direction: column !important;
-        gap: 15px !important;
+        gap: 20px !important;
+        padding: 15px !important;
     }
     
     .target-number {
@@ -266,29 +271,43 @@ $current_user = wp_get_current_user();
     }
     
     .solution-slot {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    .solution-slot.filled .dot {
         width: 30px !important;
         height: 30px !important;
+    }
+    
+    .slot-spacer {
+        width: 20px !important;
     }
 }
 
 @media (max-width: 480px) {
-    .dots-grid {
-        gap: 8px !important;
-        max-width: 250px !important;
-    }
-    
     .dot {
-        width: 20px !important;
-        height: 20px !important;
+        width: 30px !important;
+        height: 30px !important;
     }
     
     .solution-slot {
+        width: 35px !important;
+        height: 35px !important;
+    }
+    
+    .solution-slot.filled .dot {
         width: 25px !important;
         height: 25px !important;
     }
     
     .slot-row {
-        gap: 6px !important;
+        gap: 8px !important;
+    }
+    
+    .slot-spacer {
+        width: 15px !important;
+        margin: 0 5px !important;
     }
 }
 </style>
@@ -309,6 +328,74 @@ jQuery(document).ready(function($) {
         return now.toISOString().replace(/[:.-]/g, '_');
     }
     
+    // Layouts für 15 Dots - verschiedene Verteilungen
+    const layouts = [
+        // Layout 1
+        [
+            {"left":15.5,"top":25.2}, {"left":45.8,"top":15.1}, {"left":75.2,"top":22.8}, 
+            {"left":25.1,"top":45.5}, {"left":65.3,"top":40.2}, {"left":85.7,"top":38.9},
+            {"left":12.8,"top":65.1}, {"left":38.4,"top":68.7}, {"left":58.9,"top":62.3},
+            {"left":78.2,"top":70.4}, {"left":92.1,"top":55.8}, {"left":35.6,"top":88.2},
+            {"left":55.7,"top":85.1}, {"left":75.8,"top":88.9}, {"left":8.2,"top":82.7}
+        ],
+        // Layout 2  
+        [
+            {"left":22.3,"top":18.5}, {"left":52.1,"top":8.9}, {"left":82.4,"top":16.2},
+            {"left":18.7,"top":38.1}, {"left":48.9,"top":35.7}, {"left":78.5,"top":42.8},
+            {"left":15.2,"top":58.9}, {"left":35.8,"top":55.2}, {"left":65.1,"top":60.7},
+            {"left":85.9,"top":58.3}, {"left":25.4,"top":78.1}, {"left":45.7,"top":82.5},
+            {"left":68.2,"top":78.9}, {"left":88.1,"top":75.2}, {"left":12.5,"top":88.7}
+        ],
+        // Layout 3
+        [
+            {"left":35.2,"top":12.8}, {"left":65.7,"top":18.3}, {"left":88.4,"top":25.1},
+            {"left":15.8,"top":32.5}, {"left":42.1,"top":38.7}, {"left":72.9,"top":35.2},
+            {"left":25.4,"top":55.8}, {"left":55.2,"top":52.1}, {"left":82.7,"top":58.9},
+            {"left":18.5,"top":72.3}, {"left":38.9,"top":78.5}, {"left":62.1,"top":75.2},
+            {"left":85.2,"top":78.9}, {"left":45.8,"top":88.1}, {"left":8.7,"top":85.2}
+        ],
+        // Layout 4
+        [
+            {"left":28.9,"top":15.7}, {"left":58.2,"top":12.1}, {"left":85.7,"top":18.9},
+            {"left":12.4,"top":35.2}, {"left":38.7,"top":32.8}, {"left":68.9,"top":38.5},
+            {"left":22.1,"top":52.7}, {"left":52.8,"top":48.9}, {"left":78.5,"top":55.1},
+            {"left":32.7,"top":68.2}, {"left":62.4,"top":72.8}, {"left":88.1,"top":68.5},
+            {"left":15.8,"top":82.9}, {"left":45.2,"top":85.7}, {"left":75.8,"top":88.2}
+        ],
+        // Layout 5
+        [
+            {"left":42.7,"top":8.5}, {"left":72.1,"top":15.2}, {"left":92.8,"top":28.7},
+            {"left":15.2,"top":28.9}, {"left":35.8,"top":32.1}, {"left":58.7,"top":35.8},
+            {"left":25.1,"top":48.2}, {"left":48.9,"top":52.7}, {"left":75.2,"top":48.9},
+            {"left":12.8,"top":65.1}, {"left":38.5,"top":68.7}, {"left":65.8,"top":72.1},
+            {"left":85.2,"top":68.9}, {"left":28.7,"top":85.2}, {"left":55.8,"top":88.7}
+        ]
+    ];
+    
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+    
+    function applyLayout(layout) {
+        const dotItems = document.querySelectorAll('.dot-item');
+        
+        // Layout auf Dots anwenden
+        dotItems.forEach((dotItem, idx) => {
+            if (layout[idx]) {
+                dotItem.style.left = layout[idx].left + '%';
+                dotItem.style.top = layout[idx].top + '%';
+            }
+        });
+    }
+    
+    function chooseRandomLayout() { 
+        const randomLayout = layouts[Math.floor(Math.random() * layouts.length)];
+        applyLayout(randomLayout);
+    }
+    
     function generateTargetNumber() {
         return Math.floor(Math.random() * 7) + 3; // 3-9
     }
@@ -320,6 +407,9 @@ jQuery(document).ready(function($) {
         // Alle Punkte zurücksetzen
         $('.dot-item').removeClass('used');
         $('.solution-slot').removeClass('filled correct wrong').empty();
+        
+        // Neues Layout anwenden
+        chooseRandomLayout();
         
         $('#result-display').text(`Runde ${round}: Klicke ${currentTargetNumber} Punkte in die Slots!`);
         gameStartTime = new Date();
@@ -358,9 +448,6 @@ jQuery(document).ready(function($) {
         
         // Slot füllen
         nextSlot.addClass('filled').html('<div class="dot"></div>');
-        
-        // Sound-Feedback (optional)
-        // playSound('click');
     });
     
     // Slot klicken -> Punkt zurück ins Playfield
@@ -448,6 +535,7 @@ jQuery(document).ready(function($) {
     });
     
     // Spiel starten
+    chooseRandomLayout(); // Layout vor dem ersten Spiel setzen
     startNewRound();
 });
 </script>

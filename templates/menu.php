@@ -38,6 +38,10 @@ if (!empty($game_mode)) {
         } elseif (strpos($game_mode, '-extra') !== false) {
             include WORT_SPIEL_PLUGIN_PATH . 'templates/game-extra.php';
             return;
+        } elseif ($game_mode === 'COUNTING_DOTS') {
+            include WORT_SPIEL_PLUGIN_PATH . 'templates/game-counting-dots.php';
+            return;
+        
         } else {
             // Standard Wort-Spiel Template
             include WORT_SPIEL_PLUGIN_PATH . 'templates/game.php';
@@ -215,12 +219,18 @@ jQuery(document).ready(function($) {
                     description: '<?php _e('Erweiterte Essen-Wörter mit besonderen Features', 'wort-spiel'); ?>',
                     icon: '🍎✨'
                 },
-  'animals-audio-extra': {
-    id: 'animals-audio-extra',
-    title: 'Tiere Audio-Extra',
-    description: 'Höre das Tierwort und finde die richtigen Buchstaben',
-    icon: ''
-}              
+                'animals-audio-extra': {
+                    id: 'animals-audio-extra',
+                    title: 'Tiere Audio-Extra',
+                    description: 'Höre das Tierwort und finde die richtigen Buchstaben',
+                    icon: ''
+                },
+                'COUNTING_DOTS': {
+                    id: 'COUNTING_DOTS',
+                    title: 'Punkte Zählen',
+                    description: 'Klicke die richtige Anzahl Punkte in die Slots',
+                    icon: '🔢'
+                }              
 
             };
             
