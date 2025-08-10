@@ -89,47 +89,51 @@ if (!in_array($game_mode, $allowed_modes)) {
 
 <!-- ===== COUNTING-SPEZIFISCHES CSS ===== -->
 <style>
-/* GAME INSTRUCTIONS */
+/* GAME INSTRUCTIONS - KOMPAKTER */
 .game-instructions {
     text-align: center;
     color: #495057;
     font-size: 1rem;
     background: rgba(255,255,255,0.9);
-    padding: 12px 20px;
+    padding: 8px 20px;          /* WENIGER PADDING */
     border-radius: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;        /* WENIGER MARGIN */
     border: 2px solid #e9ecef;
     flex-shrink: 0;
 }
 
-/* HAUPTCONTAINER */
+/* HAUPTCONTAINER - WICHTIGKEIT ERHÖHEN */
 #counting-container {
-    flex: 1;
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-    overflow: hidden;
-    min-height: 0; /* Wichtig für Flex-Shrinking */
+    flex: 1 !important;
+    display: flex !important;
+    gap: 15px !important;
+    align-items: stretch !important;
+    overflow: hidden !important;
+    min-height: 400px !important;
 }
 
-/* PLAYFIELD WRAPPER */
+/* PLAYFIELD WRAPPER - WICHTIGKEIT ERHÖHEN */
 #playfield-wrapper {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 400px !important;
+    height: 100% !important;
 }
 
-/* PLAYFIELD (passt sich an verfügbare Höhe an) */
+/* PLAYFIELD - WICHTIGKEIT ERHÖHEN */
 .counting-playfield {
-    flex: 1;
-    position: relative;
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
-    min-height: 200px;
-    width: 100%;
+    flex: 1 !important;
+    position: relative !important;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+    border-radius: 15px !important;
+    overflow: hidden !important;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.1) !important;
+    min-height: 400px !important;
+    height: 100% !important;
+    width: 100% !important;
+    display: block !important;
+    visibility: visible !important;
 }
 
 /* ZAHLEN-BUTTONS */
@@ -338,6 +342,14 @@ jQuery(document).ready(function($) {
 
     // Zahlen-Buttons erstellen
     function createNumberButtons() {
+        const playfield = document.getElementById('playfield');
+        
+        if (!playfield) {
+            console.error('PLAYFIELD NICHT GEFUNDEN!');
+            return;
+        }
+        
+        console.log('Playfield gefunden:', playfield);
         playfield.innerHTML = ''; // Clear existing buttons
         
         for (let i = 1; i <= 9; i++) {
@@ -346,7 +358,10 @@ jQuery(document).ready(function($) {
             btn.dataset.number = i;
             btn.className = 'num-btn';
             playfield.appendChild(btn);
+            console.log('Button', i, 'erstellt');
         }
+        
+        console.log('Alle Buttons erstellt. Playfield innerHTML:', playfield.innerHTML);
     }
 
     // Layout-Definitionen (gleich wie vorher)

@@ -1,11 +1,18 @@
 <?php
+/**
+ * Template für das Audio-Extra Spiel
+ * NEUE 3-BEREICHE LAYOUT VERSION
+ * 
+ * @package WortSpiel
+ */
+
 // Sicherheit
 if (!defined('ABSPATH')) {
     exit;
 }
 
 // Berechtigung prüfen
-$game_mode = isset($_GET['game_mode']) ? sanitize_text_field($_GET['game_mode']) : 'audio-extra';
+$game_mode = isset($_GET['game_mode']) ? sanitize_text_field($_GET['game_mode']) : 'animals-audio-extra';
 $current_user = wp_get_current_user();
 
 $allowed_modes = get_user_meta(get_current_user_id(), 'wort_spiel_allowed_modes', true);
@@ -14,286 +21,223 @@ if (empty($allowed_modes)) {
 }
 
 if (!in_array($game_mode, $allowed_modes)) {
-    echo '<p>Sie haben keine Berechtigung für diesen Spielmodus.</p>';
+    echo '<p>' . __('Sie haben keine Berechtigung für diesen Spielmodus.', 'wort-spiel') . '</p>';
     return;
 }
 ?>
 
-<div id="wort-spiel-audio-extra-container" class="wort-spiel-audio-extra">
+<div id="wort-spiel-audio-extra-container" class="wort-spiel-game">
     
-    <!-- Zurück Button -->
-    <button id="back-to-menu-btn" class="wort-spiel-btn back-btn">
-        ← Zurück zum Menü
-    </button>
-    
-    <!-- Spiel Header -->
+    <!-- ===== HEADER ===== -->
     <div class="game-header">
-        <h2>🔊 Audio-Wörter Extra</h2>
-        <div class="player-info">
-            Spieler: <strong><?php echo esc_html($current_user->display_name); ?></strong>
+        <div class="header-left">
+            <button id="back-to-menu-btn" class="wort-spiel-btn back-btn">
+                ← <?php _e('Zurück', 'wort-spiel'); ?>
+            </button>
+            <h2 id="game-mode-title">🔊 <?php _e('Audio-Extra', 'wort-spiel'); ?></h2>
         </div>
-        <div class="game-instructions">
-            Höre das Wort und finde die richtigen Buchstaben! Klicke auf Buchstaben in der Lösungszeile, um sie zu entfernen.
+        <div class="header-right">
+            <div class="player-info">
+                <?php printf(__('Spieler: %s', 'wort-spiel'), '<strong>' . esc_html($current_user->display_name) . '</strong>'); ?>
+            </div>
+            <button id="replay-btn" class="wort-spiel-btn audio-btn">
+                🔊 <?php _e('Wiederholen', 'wort-spiel'); ?>
+            </button>
         </div>
     </div>
     
-    <!-- Audio-Bereich -->
-    <div id="audio-display">
-        <div id="audio-status">Höre gut zu...</div>
-        <button id="replay-btn" class="wort-spiel-btn audio-btn">🔊 Wort wiederholen</button>
-    </div>
-    
-    <div id="loading" style="display:none;">Lade Audio...</div>
-    <div id="error" style="display:none;">Audio konnte nicht geladen werden.</div>
-    
-    <!-- Spiel-Bereich -->
-    <div id="game-area">
-        <div id="playfield"></div>
-        <div id="word-line"></div>
+    <!-- ===== GAME-CONTENT ===== -->
+    <div class="game-content">
         
-        <div id="controls">
-            <button id="check-btn" class="wort-spiel-btn success-btn">Prüfen</button>
-            <button id="reset-btn" class="wort-spiel-btn danger-btn">Zurücksetzen</button>
-            <button id="new-word-btn" class="wort-spiel-btn primary-btn">Neues Wort</button>
+        <!-- Audio-Anzeige -->
+        <div id="audio-display" class="audio-display">
+            <div id="audio-status" class="audio-status">
+                <?php _e('Höre das Wort und finde die richtigen Buchstaben!', 'wort-spiel'); ?>
+            </div>
         </div>
         
-        <div id="result"></div>
+        <!-- Loading & Error Messages -->
+        <div id="loading-message" class="loading-message" style="display:none;">
+            <?php _e('Lade Audio...', 'wort-spiel'); ?>
+        </div>
+        <div id="error-message" class="error-message" style="display:none;">
+            <?php _e('Audio konnte nicht geladen werden.', 'wort-spiel'); ?>
+        </div>
+        
+        <!-- PLAYFIELD -->
+        <div id="playfield" class="playfield audio-extra-playfield">
+            <!-- Buchstaben-Buttons werden hier generiert -->
+        </div>
+        
+        <!-- WORD-LINE -->
+        <div id="word-line" class="word-line audio-extra-word-line">
+            <!-- Wort-Slots werden hier generiert -->
+        </div>
+        
+    </div>
+    
+    <!-- ===== FOOTER ===== -->
+    <div class="game-footer">
+        <div class="game-controls">
+            <button id="check-btn" class="wort-spiel-btn success">
+                <?php _e('Prüfen', 'wort-spiel'); ?>
+            </button>
+            <button id="reset-btn" class="wort-spiel-btn secondary">
+                <?php _e('Zurücksetzen', 'wort-spiel'); ?>
+            </button>
+            <button id="new-word-btn" class="wort-spiel-btn primary">
+                <?php _e('Neues Wort', 'wort-spiel'); ?>
+            </button>
+        </div>
+        <div id="result-display" class="result-display">
+            <!-- Ergebnis wird hier angezeigt -->
+        </div>
     </div>
     
     <!-- End Screen -->
-    <div id="end-screen" style="display:none;">
-        <div class="end-message">🎉 Du hast alle Wörter geschafft!</div>
-        <div class="end-controls">
-            <button id="restart-btn" class="wort-spiel-btn primary-btn">🔁 Neues Spiel</button>
-            <button id="exit-btn" class="wort-spiel-btn secondary-btn">🚪 Beenden</button>
+    <div id="end-screen" class="end-screen" style="display:none;">
+        <div class="end-screen-content">
+            <div class="end-title">
+                🎉 <?php _e('Du hast alle Wörter geschafft!', 'wort-spiel'); ?>
+            </div>
+            <div class="end-actions">
+                <button id="restart-game-btn" class="wort-spiel-btn primary">
+                    🔁 <?php _e('Neues Spiel', 'wort-spiel'); ?>
+                </button>
+                <button id="back-to-menu-end-btn" class="wort-spiel-btn secondary">
+                    🏠 <?php _e('Zurück zum Menü', 'wort-spiel'); ?>
+                </button>
+            </div>
         </div>
     </div>
     
 </div>
 
+<!-- ===== AUDIO-EXTRA SPEZIFISCHES CSS ===== -->
 <style>
-.wort-spiel-audio-extra {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
+/* PLAYFIELD - Grau/Neutral für Audio-Extra */
+.audio-extra-playfield {
+    flex: 1 !important;
+    position: relative !important;
+    background: linear-gradient(135deg, #95a5a6 0%, #bdc3c7 100%) !important;
+    border-radius: 15px !important;
+    margin-bottom: 20px !important;
+    overflow: hidden !important;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.1) !important;
+    min-height: 250px !important;
+    width: 100% !important;
+    display: block !important;
+    visibility: visible !important;
 }
 
-.back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: #666;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.3s;
+/* BUCHSTABEN-BUTTONS - Mehr Buchstaben möglich */
+.audio-extra-playfield .letter-btn {
+    position: absolute !important;
+    width: 60px !important;
+    height: 60px !important;
+    border: none !important;
+    border-radius: 50% !important;
+    font-size: 1.5rem !important;
+    font-weight: bold !important;
+    background: white !important;
+    color: #2c3e50 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
-.back-btn:hover {
-    background: #555;
-    transform: translateY(-2px);
+.audio-extra-playfield .letter-btn:hover {
+    background: #ecf0f1 !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3) !important;
 }
 
-.game-header {
-    text-align: center;
-    margin-bottom: 30px;
-    margin-top: 60px;
+.audio-extra-playfield .letter-btn.selected {
+    background: #3498db !important;
+    color: white !important;
+    transform: scale(0.9) !important;
+    opacity: 0.7 !important;
 }
 
-.game-header h2 {
-    color: #2c3e50;
-    margin-bottom: 10px;
-    font-size: 2.5rem;
+/* WORD LINE - Drag & Drop optimiert */
+.audio-extra-word-line {
+    height: 80px !important;
+    min-height: 80px !important;
+    max-height: 80px !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
-.player-info {
-    font-size: 1.2rem;
-    color: #7f8c8d;
-    margin-bottom: 15px;
+.audio-extra-word-line .word-slot {
+    width: 60px !important;
+    height: 60px !important;
+    border: 3px dashed #bdc3c7 !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    font-size: 1.5rem !important;
+    font-weight: bold !important;
+    background: white !important;
+    cursor: move !important;
+    transition: all 0.3s ease !important;
 }
 
-.game-instructions {
-    background: #e8f4fd;
-    padding: 15px;
-    border-radius: 10px;
-    color: #2980b9;
-    font-weight: 500;
-    max-width: 600px;
-    margin: 0 auto;
+.audio-extra-word-line .word-slot:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
 }
 
-/* Audio-Bereich */
-#audio-display {
-    text-align: center;
-    margin-bottom: 30px;
+.audio-extra-word-line .word-slot.filled {
+    background: #e3f2fd !important;
+    border: 3px solid #2196f3 !important;
+    color: #1976d2 !important;
+    cursor: pointer !important;
 }
 
-#audio-status {
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 15px;
-    min-height: 30px;
+.audio-extra-word-line .word-slot.correct {
+    background: #4caf50 !important;
+    color: white !important;
+    border: 3px solid #4caf50 !important;
+    animation: correctPulse 0.6s ease !important;
 }
 
-.audio-btn {
-    background: #2196f3;
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    border-radius: 10px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s;
+.audio-extra-word-line .word-slot.wrong {
+    background: #f44336 !important;
+    color: white !important;
+    border: 3px solid #f44336 !important;
+    animation: wrongShake 0.6s ease !important;
 }
 
-.audio-btn:hover {
-    background: #1976d2;
-    transform: translateY(-2px);
-}
-
-.audio-btn:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    transform: none;
-}
-
-#loading, #error {
-    text-align: center;
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-}
-
-#loading {
-    color: #666;
-}
-
-#error {
-    color: #f44336;
-}
-
-/* Spielfeld */
-#playfield {
-    position: relative;
-    width: 100%;
-    height: 400px;
-    background: #f8f9fa;
-    border: 2px solid #e9ecef;
-    border-radius: 15px;
-    margin-bottom: 30px;
-    overflow: hidden;
-}
-
-.letter-btn {
-    position: absolute;
-    width: 70px;
-    height: 70px;
-    border: none;
-    border-radius: 50%;
-    font-size: 1.8rem;
-    font-weight: bold;
-    background: #ecf0f1;
-    color: #2c3e50;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.letter-btn:hover {
-    background: #bdc3c7;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-}
-
-.letter-btn.selected {
-    background: #3498db;
-    color: white;
-    transform: scale(0.9);
-    opacity: 0.7;
-}
-
-/* Wort-Linie */
-#word-line {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 30px;
-    min-height: 80px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.word-slot {
-    width: 70px;
-    height: 70px;
-    border: 3px dashed #bdc3c7;
-    border-radius: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.8rem;
-    font-weight: bold;
-    background: white;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-/* Drag & Drop Styles für Slots */
+/* DRAG & DROP STYLES */
 .slot-ghost {
-    opacity: 0.4;
+    opacity: 0.4 !important;
     background: #e3f2fd !important;
 }
 
 .slot-chosen {
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px rgba(33, 150, 243, 0.3);
+    transform: scale(1.05) !important;
+    box-shadow: 0 6px 12px rgba(33, 150, 243, 0.3) !important;
 }
 
 .slot-drag {
-    transform: rotate(5deg);
-    z-index: 1000;
+    transform: rotate(5deg) !important;
+    z-index: 1000 !important;
 }
 
-.word-slot {
-    cursor: move; /* Zeigt an dass Slots bewegbar sind */
-}
-
-.word-slot.filled {
-    background: #e3f2fd;
-    border: 3px solid #2196f3;
-    color: #1976d2;
-    cursor: pointer; /* Klickbar zum Entfernen */
-}
-
-.word-slot:hover {
-    transform: translateY(-2px);
-    transition: all 0.2s;
-}
-
-.word-slot.correct {
-    background: #4caf50;
-    color: white;
-    border: 3px solid #4caf50;
-    animation: correctPulse 0.6s ease;
-}
-
-.word-slot.wrong {
-    background: #f44336;
-    color: white;
-    border: 3px solid #f44336;
-    animation: wrongShake 0.6s ease;
-}
-
+/* ANIMATIONEN */
 @keyframes correctPulse {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+    50% { transform: scale(1.1); box-shadow: 0 0 25px rgba(76, 175, 80, 0.6); }
 }
 
 @keyframes wrongShake {
@@ -302,158 +246,46 @@ if (!in_array($game_mode, $allowed_modes)) {
     75% { transform: translateX(5px); }
 }
 
-/* Controls */
-#controls {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
-
-.wort-spiel-btn {
-    padding: 15px 30px;
-    font-size: 1.1rem;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s;
-    min-width: 120px;
-}
-
-.primary-btn {
-    background: #2196f3;
-    color: white;
-}
-
-.primary-btn:hover {
-    background: #1976d2;
-    transform: translateY(-2px);
-}
-
-.success-btn {
-    background: #4caf50;
-    color: white;
-}
-
-.success-btn:hover {
-    background: #45a049;
-    transform: translateY(-2px);
-}
-
-.danger-btn {
-    background: #f44336;
-    color: white;
-}
-
-.danger-btn:hover {
-    background: #da190b;
-    transform: translateY(-2px);
-}
-
-.secondary-btn {
-    background: #95a5a6;
-    color: white;
-}
-
-.secondary-btn:hover {
-    background: #7f8c8d;
-    transform: translateY(-2px);
-}
-
-/* Result */
-#result {
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    min-height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.success {
-    color: #4caf50;
-}
-
-.error {
-    color: #f44336;
-}
-
-/* End Screen */
-#end-screen {
-    text-align: center;
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-    margin-top: 50px;
-}
-
-.end-message {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-.end-controls {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-/* Responsive */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-    #playfield {
-        height: 300px;
+    .audio-extra-playfield .letter-btn {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 1.3rem !important;
     }
     
-    .letter-btn {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
+    .audio-extra-word-line {
+        height: 70px !important;
+        min-height: 70px !important;
+        max-height: 70px !important;
+        gap: 10px !important;
     }
     
-    .word-slot {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
-    }
-    
-    #controls {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .wort-spiel-btn {
-        min-width: 200px;
-    }
-    
-    .game-header h2 {
-        font-size: 2rem;
+    .audio-extra-word-line .word-slot {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 1.3rem !important;
     }
 }
 
 @media (max-width: 480px) {
-    .wort-spiel-audio-extra {
-        padding: 10px;
+    .audio-extra-playfield .letter-btn {
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 1.2rem !important;
     }
     
-    .letter-btn {
-        width: 50px;
-        height: 50px;
-        font-size: 1.3rem;
+    .audio-extra-word-line {
+        height: 60px !important;
+        min-height: 60px !important;
+        max-height: 60px !important;
+        gap: 8px !important;
     }
     
-    .word-slot {
-        width: 50px;
-        height: 50px;
-        font-size: 1.3rem;
-    }
-    
-    #word-line {
-        gap: 8px;
+    .audio-extra-word-line .word-slot {
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 1.2rem !important;
     }
 }
 </style>
@@ -463,6 +295,8 @@ jQuery(document).ready(function($) {
     
     // Nur laden wenn Container vorhanden
     if (!$('#wort-spiel-audio-extra-container').length) return;
+    
+    console.log('Audio-Extra-Spiel initialisiert - Neues Layout');
     
     // SortableJS Library für Drag & Drop einbinden
     if (typeof Sortable === 'undefined') {
@@ -524,14 +358,14 @@ jQuery(document).ready(function($) {
     // DOM Elemente
     const playfield = $('#playfield');
     const wordLine = $('#word-line');
-    const audioStatus = $('#audio-status');
+    /*const audioStatus = $('#audio-status');*/
     const replayBtn = $('#replay-btn');
     const checkBtn = $('#check-btn');
     const resetBtn = $('#reset-btn');
     const newWordBtn = $('#new-word-btn');
-    const result = $('#result');
-    const loading = $('#loading');
-    const errorDiv = $('#error');
+    const resultDisplay = $('#result-display');
+    const loadingMessage = $('#loading-message');
+    const errorMessage = $('#error-message');
     const endScreen = $('#end-screen');
     
     // Session-ID generieren
@@ -543,11 +377,11 @@ jQuery(document).ready(function($) {
     // Game Mode ermitteln
     function getGameMode() {
         const urlParams = new URLSearchParams(window.location.search);
-        const mode = urlParams.get('game_mode') || 'audio-extra';
+        const mode = urlParams.get('game_mode') || 'animals-audio-extra';
         
         // Kategorie aus dem Modus extrahieren (z.B. animals-audio-extra -> animals)
         const parts = mode.split('-');
-        if (parts.length > 1 && wordLists[parts[0]]) {
+        if (parts.length > 0 && wordLists[parts[0]]) {
             return parts[0];
         }
         
@@ -566,13 +400,7 @@ jQuery(document).ready(function($) {
     function getAudioPath(word, category) {
         const fileName = getAudioFileName(word);
         const pluginPath = wortSpielAjax ? wortSpielAjax.pluginUrl : '/wp-content/plugins/wort-spiel/';
-        // PFAD ANPASSEN: Hier kannst du den Audio-Pfad ändern
         return `${pluginPath}assets/audio/${category}/${fileName}.m4a`;
-        
-        // ALTERNATIVE PFADE (auskommentiert):
-        // return `${pluginPath}audio/${category}/${fileName}.m4a`;  // Andere Dateiendung
-        // return `/wp-content/uploads/audio/${category}/${fileName}.mp3`;  // Uploads-Ordner
-        // return `./audio/${category}/${fileName}.mp3`;  // Relativer Pfad
     }
     
     async function loadAudio(word, category) {
@@ -601,28 +429,28 @@ jQuery(document).ready(function($) {
     
     async function playAudio(word, category, delay = 700) {
         try {
-            loading.show();
+            loadingMessage.show();
             replayBtn.prop('disabled', true);
             
             const audio = await loadAudio(word, category);
             currentAudio = audio;
             
             setTimeout(() => {
-                loading.hide();
+                loadingMessage.hide();
                 replayBtn.prop('disabled', false);
-                errorDiv.hide();
+                errorMessage.hide();
                 
                 audio.currentTime = 0;
                 audio.play();
                 
-                audioStatus.text('');
+                /*audioStatus.text('🔊 Höre gut zu...');*/
             }, delay);
             
         } catch (error) {
-            loading.hide();
-            errorDiv.show().text(`Audio für "${word}" nicht verfügbar`);
+            loadingMessage.hide();
+            errorMessage.show().text(`Audio für "${word}" nicht verfügbar`);
             replayBtn.prop('disabled', true);
-            audioStatus.text('');
+            /*audioStatus.text(`Gesuchtes Wort: ${word}`);*/
         }
     }
     
@@ -630,7 +458,7 @@ jQuery(document).ready(function($) {
         if (currentAudio) {
             currentAudio.currentTime = 0;
             currentAudio.play();
-            audioStatus.text('');
+            /*audioStatus.text('🔊 Wort wird wiederholt...');*/
         }
     }
     
@@ -752,9 +580,9 @@ jQuery(document).ready(function($) {
         gameStartTime = new Date();
         selectedLetters = [];
         
-        result.text('').removeClass();
-        errorDiv.hide();
-        audioStatus.text('');
+        resultDisplay.text('').removeClass('success error');
+        errorMessage.hide();
+        /*audioStatus.text('Lade neues Wort...');*/
         
         createLetterButtons();
         createWordSlots();
@@ -768,22 +596,24 @@ jQuery(document).ready(function($) {
         
         if (userWord === currentWord) {
             slots.addClass('correct');
-            result.text('🎉 Richtig!').addClass('success');
-            audioStatus.text('');
+            resultDisplay.text('🎉 Richtig! Das war: ' + currentWord).addClass('success');
+            /*audioStatus.text('✅ Perfekt gelöst!');*/
             
             saveGameResult(currentWord, userWord, true);
             
             setTimeout(() => {
                 initGame();
-            }, 1500);
+            }, 2000);
             
         } else {
-            result.text('❌ Falsch').addClass('error');
+            slots.addClass('wrong');
+            resultDisplay.text('❌ Falsch! Du hattest: "' + userWord + '" - Richtig: "' + currentWord + '"').addClass('error');
+            
             saveGameResult(currentWord, userWord, false);
             
             setTimeout(() => {
                 slots.removeClass('wrong');
-            }, 2000);
+            }, 3000);
         }
     }
     
@@ -796,16 +626,14 @@ jQuery(document).ready(function($) {
             $(this).text('').removeClass('filled correct wrong');
         });
         
-        result.text('').removeClass();
-        audioStatus.text('');
+        resultDisplay.text('').removeClass('success error');
+        /*audioStatus.text('🔊 Höre gut zu...');*/
     }
     
     function showEndScreen() {
-        $('#controls').hide();
-        newWordBtn.prop('disabled', true);
         endScreen.show();
         
-        // Konfetti-Effekt (falls verfügbar)
+        // Konfetti-Effekt
         if (typeof confetti !== 'undefined') {
             confetti({
                 particleCount: 200,
@@ -827,17 +655,21 @@ jQuery(document).ready(function($) {
                 action: 'wort_spiel_save_game',
                 nonce: wortSpielAjax.nonce,
                 session_id: sessionId,
-                game_mode: 'audio-extra-' + currentCategory,
+                game_mode: currentCategory + '-audio-extra',
                 target_word: targetWord,
                 user_input: userInput,
                 is_correct: isCorrect ? 1 : 0,
                 duration: duration
             },
             success: function(response) {
-                console.log('Ergebnis gespeichert:', response);
+                if (response.success) {
+                    console.log('Ergebnis gespeichert');
+                } else {
+                    console.error('Fehler beim Speichern:', response.data?.message);
+                }
             },
-            error: function(xhr, status, error) {
-                console.error('Fehler beim Speichern:', error);
+            error: function() {
+                console.error('AJAX-Fehler beim Speichern');
             }
         });
     }
@@ -880,11 +712,11 @@ jQuery(document).ready(function($) {
         }
         
         // Passenden Button wieder aktivieren
-        const btn = letterButtons.find(b => 
-            b.attr('data-letter') === letter && b.hasClass('selected')
+        const matchingBtn = letterButtons.find(b => 
+            $(b).attr('data-letter') === letter && $(b).hasClass('selected')
         );
-        if (btn) {
-            btn.removeClass('selected');
+        if (matchingBtn) {
+            $(matchingBtn).removeClass('selected');
         }
     });
     
@@ -895,16 +727,19 @@ jQuery(document).ready(function($) {
     replayBtn.on('click', replayAudio);
     
     // End Screen Buttons
-    $('#restart-btn').on('click', function() {
+    $('#restart-game-btn').on('click', function() {
         playlist = [];
         playlist.usedUpOnce = false;
         endScreen.hide();
-        $('#controls').show();
-        newWordBtn.prop('disabled', false);
         initGame();
     });
     
-    $('#exit-btn').on('click', function() {
+    $('#back-to-menu-end-btn').on('click', function() {
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio = null;
+        }
+        
         const url = new URL(window.location.href);
         url.searchParams.delete('game_mode');
         url.hash = '';
@@ -923,6 +758,16 @@ jQuery(document).ready(function($) {
         url.hash = '';
         window.location.href = url.toString();
     });
+    
+    // Spiel-Modus-Titel setzen
+    const gameModeNames = {
+        'animals': 'Tiere Audio-Extra',
+        'nature': 'Natur Audio-Extra',
+        'colors': 'Farben Audio-Extra',
+        'food': 'Essen Audio-Extra'
+    };
+    
+    $('#game-mode-title').text('🔊 ' + (gameModeNames[currentCategory] || 'Audio-Extra'));
     
     // Spiel starten
     console.log('Starte Audio-Extra-Spiel mit Kategorie:', currentCategory);
