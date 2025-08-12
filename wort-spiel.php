@@ -541,13 +541,7 @@ class WortSpielPlugin {
                 'title' => __('Tiere', 'wort-spiel'),
                 'description' => __('Katze, Hund, Vogel und mehr', 'wort-spiel'),
                 'template' => 'game.php'
-            ),
-            'animals-learning' => array(
-                'id' => 'animals-learning',
-                'title' => __('Tiere (Lernmodus)', 'wort-spiel'),
-                'description' => __('Mit sichtbarem Wort - Katze, Hund, Vogel und mehr', 'wort-spiel'),
-                'template' => 'game-learning.php',
-                'category' => 'animals'
+
             ),
             'nature' => array(
                 'id' => 'nature',
