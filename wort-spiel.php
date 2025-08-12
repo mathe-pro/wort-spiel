@@ -41,6 +41,15 @@ class WortSpielPlugin {
         // Plugin-Aktivierung
         register_activation_hook(__FILE__, array($this, 'activate'));
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
+
+        // Bei User-Registrierung automatisch Rolle zuweisen
+add_action('user_register', array($this, 'auto_assign_user_role'));
+
+
+
+
+
+
         
         // AJAX-Handler registrieren
         add_action('wp_ajax_wort_spiel_save_game', array($this, 'ajax_save_game'));
@@ -51,6 +60,10 @@ class WortSpielPlugin {
         add_action('wp_ajax_wort_spiel_save_user_modes', array($this, 'ajax_save_user_modes'));
         add_action('wp_ajax_wort_spiel_get_all_players', array($this, 'ajax_get_all_players'));
     }
+
+
+
+    
     
     /**
      * Plugin initialisieren
@@ -127,6 +140,13 @@ class WortSpielPlugin {
             $editor_role->add_cap('view_wort_spiel_stats');
             $editor_role->add_cap('play_wort_spiel');
         }
+
+        // Abonnenten können auch spielen
+$subscriber_role = get_role('subscriber');
+if ($subscriber_role) {
+    $subscriber_role->add_cap('play_wort_spiel');
+}
+
     }
     
     /**
@@ -615,6 +635,9 @@ class WortSpielPlugin {
         return apply_filters('wort_spiel_available_game_modes', $default_modes);
     }
 }
+
+
+
 
 // Plugin initialisieren
 new WortSpielPlugin();
