@@ -43,7 +43,7 @@ class WortSpielPlugin {
         register_deactivation_hook(__FILE__, array($this, 'deactivate'));
 
         // Bei User-Registrierung automatisch Rolle zuweisen
-add_action('user_register', array($this, 'auto_assign_user_role'));
+        add_action('user_register', array($this, 'auto_assign_user_role'));
 
 
 
@@ -60,6 +60,7 @@ add_action('user_register', array($this, 'auto_assign_user_role'));
         add_action('wp_ajax_wort_spiel_save_user_modes', array($this, 'ajax_save_user_modes'));
         add_action('wp_ajax_wort_spiel_get_all_players', array($this, 'ajax_get_all_players'));
     }
+    
 
 
 
@@ -142,10 +143,10 @@ add_action('user_register', array($this, 'auto_assign_user_role'));
         }
 
         // Abonnenten können auch spielen
-$subscriber_role = get_role('subscriber');
-if ($subscriber_role) {
-    $subscriber_role->add_cap('play_wort_spiel');
-}
+        $subscriber_role = get_role('subscriber');
+        if ($subscriber_role) {
+            $subscriber_role->add_cap('play_wort_spiel');
+        }
 
     }
     
